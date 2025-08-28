@@ -50,7 +50,7 @@ spring:
       time-to-live: 3600000
       cache-null-values: false
       use-key-prefix: true
-      key-prefix: smpp:cache:
+      key-prefix: "smpp:cache:"
   
   security:
     oauth2:

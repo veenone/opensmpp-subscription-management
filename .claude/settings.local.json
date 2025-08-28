@@ -4,7 +4,14 @@
       "Bash(npx create-react-app:*)",
       "Bash(npm install)",
       "Bash(mvn:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(./mvnw clean:*)",
+      "Bash(powershell:*)",
+      "Bash(java:*)",
+      "Bash(export:*)",
+      "Bash(export PATH=\"$PATH:$JAVA_HOME/bin\")",
+      "Bash(.mvnw spring-boot:run -pl backend)",
+      "Bash(./mvnw spring-boot:run:*)"
     ],
     "deny": [],
     "ask": []
