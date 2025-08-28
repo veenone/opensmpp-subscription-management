@@ -11,7 +11,7 @@ The SMPP Subscription Management System is an enterprise-grade solution that tra
 **Status**: COMPLETED - 2024-08-28
 
 #### Recent Configuration Fixes (2024-08-28)
-- ✅ **Maven Dependency Resolution**: Resolved PostgreSQL Flyway dependency conflict by removing unnecessary flyway-database-postgresql dependency
+- ✅ **Maven Dependency Resolution**: Resolved PostgreSQL Flyway dependency issues by updating Flyway to version 11.11.2 and Spring Boot to 3.5.5
 - ✅ **Spring Boot Plugin Configuration**: Fixed mainClass configuration for multi-module Maven project structure
 - ✅ **YAML Configuration**: Corrected Redis cache key-prefix syntax error with proper string quoting
 - ✅ **Application Startup**: All configuration issues resolved, application now starts successfully
