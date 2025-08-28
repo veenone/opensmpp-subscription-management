@@ -1,353 +1,201 @@
-# SMPP Simulator Enhanced Subscription Management System
+# SMPP Subscription Management System
 
-> An enterprise-grade Java-based subscription management solution for SMPP simulators, designed for telecommunications testing and integration with comprehensive MSISDN-to-UICC identity mapping capabilities.
+Enterprise-grade subscription management solution for SMPP simulators with comprehensive MSISDN-to-UICC identity mapping capabilities.
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://adoptopenjdk.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green.svg)](https://spring.io/projects/spring-boot)
-[![React](https://img.shields.io/badge/React-18%2B-blue.svg)](https://reactjs.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-blue.svg)](https://www.postgresql.org/)
+## Overview
 
-## 🚀 Overview
+A modern subscription management system that transforms static properties file-based SMPP simulator subscriptions into a scalable, remotely manageable platform with real-time synchronization, web administration, and enterprise-grade audit capabilities.
 
-This project transforms static properties file-based SMPP simulator subscriptions into a scalable, remotely manageable platform with real-time synchronization, web administration, and enterprise-grade audit capabilities.
+## Features
 
-### Key Features
+- **Database-backed Subscription Management**: PostgreSQL-based storage with full CRUD operations
+- **Real-time Synchronization**: Automatic cache invalidation and memory state updates
+- **Web Administration Interface**: React-based UI for subscription management
+- **RESTful API**: Comprehensive API for external system integration
+- **SMPP Integration**: Enhanced commands for subscription synchronization
+- **Security**: OAuth2/JWT authentication with role-based access control
+- **Monitoring**: Prometheus metrics and Grafana dashboards
+- **High Performance**: Sub-50ms lookups with 95%+ cache hit ratio
 
-- **🔄 Real-time Synchronization**: Automatic cache invalidation and external change detection
-- **🌐 Web Administration**: Modern React/TypeScript interface for subscription management
-- **📊 Enterprise Scalability**: Support 500,000+ active subscriptions with sub-second lookups
-- **🔒 Security First**: OAuth2/JWT authentication with role-based access control
-- **📈 Performance Optimized**: Redis caching with 95%+ cache hit ratio target
-- **🔍 Comprehensive Audit**: Complete audit trail with cryptographic integrity
-- **🔌 API-First Design**: RESTful APIs for external system integration
-- **📱 SMPP Integration**: Enhanced client commands for subscription synchronization
-
-## 🏗️ Architecture
-
-### System Overview
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Web Frontend  │    │   SMPP Client   │    │ External Systems│
-│  (React/TS)     │    │   Enhanced      │    │ (Provisioning)  │
-└─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘
-          │                      │                      │
-          ▼                      ▼                      ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Spring Boot API Gateway                     │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐           │
-│  │ Subscription│  │    Auth     │  │    Sync     │           │
-│  │  Service    │  │   Service   │  │   Service   │           │
-│  └─────────────┘  └─────────────┘  └─────────────┘           │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │
-          ┌───────────┼───────────┐
-          ▼           ▼           ▼
-    ┌─────────┐ ┌─────────┐ ┌─────────────┐
-    │PostgreSQL│ │  Redis  │ │ Amarisoft   │
-    │Database │ │ Cache   │ │ Integration │
-    └─────────┘ └─────────┘ └─────────────┘
-```
-
-### Key Components
-- **Backend**: Spring Boot 3.x with Java 17+, PostgreSQL, Redis
-- **Frontend**: React 18+ with TypeScript, Material-UI
-- **Integration**: Enhanced Amarisoft library integration
-- **Infrastructure**: Docker containerization with monitoring
-
-## 📋 Problem Solved
-
-### Current Pain Points
-- **Service Disruption**: Manual file editing requires application restarts
-- **Limited Scalability**: Simple TreeMap cannot handle enterprise-scale data
-- **No Remote Access**: No API or web interface for management
-- **Missing Audit Trail**: No accountability or change tracking
-- **Basic Identity Mapping**: Only simple MSISDN→IMPI mapping
-
-### Our Solution
-- **Zero-Downtime Updates**: Real-time subscription management without restarts
-- **Enterprise Scale**: Database-backed system supporting 500,000+ subscriptions
-- **Multi-Interface Access**: Web UI, REST API, and enhanced SMPP client
-- **Comprehensive Audit**: Complete change tracking with cryptographic integrity
-- **Advanced Identity Management**: Full MSISDN-to-UICC mapping with validation
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
+
 - Java 17+
 - Node.js 18+
-- Docker & Docker Compose
-- PostgreSQL 14+
-- Redis 6+
+- Docker and Docker Compose
+- PostgreSQL 14+ (or use Docker)
+- Redis 6+ (or use Docker)
 
 ### Development Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd opensmpp-subscription-management-system
-   ```
-
-2. **Start infrastructure services**
-   ```bash
-   docker-compose up -d postgres redis
-   ```
-
-3. **Backend setup**
-   ```bash
-   ./mvnw clean install
-   ./mvnw flyway:migrate
-   ./mvnw spring-boot:run
-   ```
-
-4. **Frontend setup**
-   ```bash
-   cd frontend
-   npm install
-   npm start
-   ```
-
-5. **Access the application**
-   - Web UI: http://localhost:3000
-   - API Documentation: http://localhost:8080/swagger-ui
-   - Backend API: http://localhost:8080/api/v1
-
-### Testing SMPP Integration
-
+1. **Start Infrastructure Services**
 ```bash
-# Build the enhanced SMPP client
-./mvnw clean install
-
-# Run the SMPP client with synchronization commands
-java -cp target/classes:target/lib/* org.smpp.test.EnhancedSMPPTest
-
-# Available sync commands in SMPP client:
-# 20. REFRESH_SUBSCRIPTION - Reload specific subscription
-# 21. SYNC_ALL_SUBSCRIPTIONS - Full synchronization
-# 22. VALIDATE_SUBSCRIPTION - Check data consistency
-# 23. GET_SUBSCRIPTION_STATUS - Retrieve subscription state
-# 24. CHECK_SYNC_HEALTH - Verify system-wide consistency
+docker-compose up -d postgres redis
 ```
 
-## 💻 Development Commands
-
-### Backend (Spring Boot)
+2. **Run Backend Application**
 ```bash
-./mvnw spring-boot:run              # Run application
-./mvnw clean compile                # Compile sources
-./mvnw test                        # Run unit tests
-./mvnw integration-test            # Run integration tests
-./mvnw clean install               # Build and install
+./mvnw spring-boot:run
 ```
 
-### Database Operations
-```bash
-./mvnw flyway:migrate              # Run migrations
-./mvnw flyway:info                 # Check migration status
-./mvnw flyway:clean                # Clean database (dev only)
-```
-
-### Frontend (React/TypeScript)
+3. **Install Frontend Dependencies**
 ```bash
 cd frontend
-npm install                        # Install dependencies
-npm start                         # Start dev server
-npm test                          # Run tests
-npm run build                     # Production build
-npm run lint                      # Run ESLint
-npm run type-check                # TypeScript checks
+npm install
+```
+
+4. **Start Frontend Development Server**
+```bash
+npm start
+```
+
+5. **Access the Application**
+- Web UI: http://localhost:3000
+- API Documentation: http://localhost:8080/swagger-ui.html
+- Health Check: http://localhost:8080/actuator/health
+
+### Docker Deployment
+
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Services will be available at:
+# - Frontend: http://localhost:3000
+# - Backend API: http://localhost:8080
+# - Prometheus: http://localhost:9091
+# - Grafana: http://localhost:3001 (admin/admin)
+```
+
+## Project Structure
+
+```
+smpp-subscription-management/
+├── backend/                    # Spring Boot backend application
+│   ├── src/main/java/         # Java source code
+│   └── src/main/resources/    # Configuration files
+├── frontend/                   # React frontend application
+│   ├── src/                   # TypeScript/React source
+│   └── public/                # Static assets
+├── smpp-core/                 # SMPP protocol implementation
+├── amarisoft-integration/     # Amarisoft simulator integration
+├── docs/                      # Project documentation
+│   ├── planning.md            # Development planning and phases
+│   └── tasks.md              # Detailed task tracking
+├── docker/                    # Docker configuration files
+│   ├── prometheus/           # Prometheus monitoring config
+│   └── grafana/              # Grafana dashboard config
+├── .mvn/wrapper/             # Maven wrapper configuration
+├── mvnw                      # Maven wrapper (Unix/Linux)
+├── mvnw.cmd                  # Maven wrapper (Windows)
+├── docker-compose.yml        # Development environment
+└── CLAUDE.md                 # Development guidelines
+```
+
+## API Endpoints
+
+### Subscription Management
+- `GET /api/v1/subscriptions` - List all subscriptions
+- `GET /api/v1/subscriptions/{msisdn}` - Get subscription by MSISDN
+- `POST /api/v1/subscriptions` - Create new subscription
+- `PUT /api/v1/subscriptions/{msisdn}` - Update subscription
+- `DELETE /api/v1/subscriptions/{msisdn}` - Delete subscription
+
+### Synchronization
+- `POST /api/v1/sync/cache/invalidate` - Invalidate cache for specific MSISDN
+- `POST /api/v1/sync/refresh-all` - Refresh all subscriptions
+- `GET /api/v1/sync/health` - Check synchronization health
+
+## Development Commands
+
+### Backend
+```bash
+# Windows users can use mvnw.cmd instead of ./mvnw
+./mvnw clean compile          # Compile Java sources
+./mvnw test                   # Run unit tests
+./mvnw integration-test       # Run integration tests
+./mvnw spring-boot:run        # Run application
+```
+
+### Frontend
+```bash
+cd frontend
+npm install                   # Install dependencies
+npm start                    # Start development server
+npm test                     # Run tests
+npm run build               # Build for production
+npm run lint                # Run ESLint
+npm run type-check          # Run TypeScript checks
+```
+
+### Database
+```bash
+./mvnw flyway:migrate        # Run database migrations
+./mvnw flyway:info          # Check migration status
+./mvnw flyway:clean         # Clean database (dev only)
 ```
 
 ### Docker Operations
 ```bash
-docker-compose up -d              # Start all services
-docker-compose down               # Stop all services
-docker-compose logs -f app        # Follow app logs
-docker-compose exec db psql -U postgres  # DB access
+docker-compose up -d postgres redis    # Start infrastructure only
+docker-compose up --build             # Build and start all services
+docker-compose down                    # Stop all services
+docker-compose logs -f app            # Follow application logs
 ```
 
-## 📖 API Examples
+## Testing
 
-### Subscription Management
+### Unit Tests
 ```bash
-# Get all subscriptions
-curl -X GET http://localhost:8080/api/v1/subscriptions
-
-# Create new subscription
-curl -X POST http://localhost:8080/api/v1/subscriptions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "msisdn": "+1234567890",
-    "impi": "001010000000123@ims.example.com",
-    "status": "ACTIVE"
-  }'
-
-# Update subscription
-curl -X PUT http://localhost:8080/api/v1/subscriptions/123 \
-  -H "Content-Type: application/json" \
-  -d '{"status": "INACTIVE"}'
-```
-
-### Cache Management
-```bash
-# Invalidate specific subscription cache
-curl -X POST http://localhost:8080/api/v1/sync/cache/invalidate \
-  -H "Content-Type: application/json" \
-  -d '{"msisdn": "+1234567890"}'
-
-# Full cache refresh
-curl -X POST http://localhost:8080/api/v1/sync/cache/refresh
-
-# Check cache health
-curl -X GET http://localhost:8080/api/v1/sync/health
-```
-
-## 🔒 Security Features
-
-### Enterprise Security
-- **Authentication**: OAuth2/JWT with multi-factor authentication
-- **Authorization**: Role-based access control (RBAC) with granular permissions
-- **Data Protection**: AES-256-GCM encryption for sensitive subscription data
-- **Network Security**: TLS 1.3 for all communications
-- **Audit Trail**: Comprehensive logging with cryptographic integrity
-
-### Compliance Support
-- **GDPR**: Data protection and privacy compliance
-- **SOC2**: Security and availability controls
-- **Telecommunications**: Industry-specific compliance frameworks
-- **Audit Ready**: Complete audit trails for regulatory requirements
-
-## 📊 Performance Targets
-
-| Metric | Target | Current Baseline |
-|--------|--------|------------------|
-| Subscription Lookup | < 50ms (95th percentile) | ~500ms |
-| Cache Hit Ratio | > 95% | N/A |
-| API Throughput | 1000+ requests/second | Limited |
-| Concurrent Subscriptions | 500,000+ active | ~1,000 |
-| System Availability | 99.9% uptime | Manual downtime required |
-
-## 🧪 Testing Strategy
-
-### Test Categories
-- **Unit Tests**: JUnit 5 with Mockito (90%+ coverage target)
-- **Integration Tests**: TestContainers for database/Redis testing
-- **Performance Tests**: Gatling for load testing
-- **Security Tests**: OWASP ZAP integration
-- **E2E Tests**: Playwright for frontend testing
-
-### Running Tests
-```bash
-# All tests
 ./mvnw test
-
-# Integration tests only
-./mvnw integration-test
-
-# Performance tests
-./mvnw gatling:test
-
-# Frontend tests
-cd frontend && npm test
 ```
 
-## 📚 Documentation
-
-- **[Product Requirements Document](PRD_SMPP_Subscription_Management_System.md)**: Complete technical and business requirements
-- **[Development Guide](CLAUDE.md)**: Comprehensive development guidance and architecture
-- **[Project Planning](planning.md)**: Detailed project phases and milestones
-- **[Task Breakdown](tasks.md)**: Complete task list with dependencies and priorities
-- **API Documentation**: Available at `/swagger-ui` when running
-
-## 🗂️ Project Structure
-
-```
-opensmpp-subscription-management-system/
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/smpp/subscription/     # Core subscription management
-│   │   │   └── com/smpp/sync/             # External synchronization
-│   │   │   └── com/smpp/api/              # REST API controllers
-│   │   │   └── com/smpp/integration/      # SMPP & Amarisoft integration
-│   │   │   └── com/smpp/cache/            # Redis caching layer
-│   │   └── resources/
-│   │       ├── application.yml            # Configuration
-│   │       └── db/migration/              # Flyway migrations
-│   └── test/                              # Test suites
-├── frontend/
-│   ├── src/
-│   │   ├── components/                    # React components
-│   │   ├── pages/                         # Application pages
-│   │   ├── services/                      # API services
-│   │   └── hooks/                         # Custom React hooks
-│   └── public/                            # Static assets
-├── docker/                                # Docker configurations
-├── docs/                                  # Additional documentation
-└── scripts/                               # Utility scripts
-```
-
-## 🚦 Deployment
-
-### Production Deployment
+### Integration Tests
 ```bash
-# Build production images
-docker build -t smpp-subscription-backend .
-docker build -t smpp-subscription-frontend ./frontend
-
-# Deploy with Docker Compose
-docker-compose -f docker-compose.prod.yml up -d
-
-# Health check
-curl http://localhost:8080/actuator/health
+./mvnw integration-test
 ```
 
-### Environment Configuration
-- **Development**: Local database and Redis
-- **Staging**: Containerized with external database
-- **Production**: Kubernetes deployment with high availability
+### Performance Tests
+```bash
+./mvnw gatling:test
+```
 
-## 📈 Monitoring & Observability
+## Security
 
-### Metrics & Monitoring
-- **Application Metrics**: Micrometer with Prometheus
-- **Health Checks**: Spring Boot Actuator endpoints
-- **Performance**: Real-time subscription access analytics
-- **Alerting**: Custom alerts for subscription system health
+This system implements enterprise-grade security features:
+- OAuth2/JWT authentication
+- Role-based access control (RBAC)
+- AES-256-GCM encryption for sensitive data
+- TLS 1.3 for all communications
+- Comprehensive audit logging
 
-### Logging
-- **Structured Logging**: JSON format with correlation IDs
-- **Audit Trail**: Immutable subscription change logs
-- **Security Events**: Authentication and authorization logging
-- **Performance Logging**: Response time and cache metrics
+## Development Status
 
-## 🤝 Contributing
+**Current Phase**: Phase 1 Complete ✅  
+**Next Phase**: Phase 2 - Database Design and Core Subscription Management
 
-1. **Fork the repository**
-2. **Create feature branch**: `git checkout -b feature/amazing-feature`
-3. **Commit changes**: `git commit -m 'Add amazing feature'`
-4. **Push to branch**: `git push origin feature/amazing-feature`
-5. **Open Pull Request**
+### Completed (Phase 1)
+- ✅ Project foundation and structure
+- ✅ Spring Boot backend with comprehensive configuration
+- ✅ React TypeScript frontend with Material-UI
+- ✅ Docker development environment
+- ✅ Monitoring setup (Prometheus/Grafana)
+- ✅ Cross-platform build support (Windows/Linux/Mac)
 
-### Development Guidelines
-- **Code Coverage**: Maintain 90%+ test coverage
-- **Security First**: All changes must pass security review
-- **Performance Impact**: Benchmark critical path changes
-- **Documentation**: Update docs for all public APIs
+### In Progress (Phase 2)
+- 🔄 Database schema design
+- 🔄 Core subscription entities
+- 🔄 Authentication and security implementation
 
-## 📞 Support & Contact
+For detailed planning and task tracking, see:
+- [Development Planning](docs/planning.md)
+- [Task Tracking](docs/tasks.md)
 
-- **Issues**: Create GitHub issues for bug reports and feature requests
-- **Documentation**: Check the `/docs` folder for detailed guides
-- **Architecture Questions**: Refer to `CLAUDE.md` for technical details
-- **Project Planning**: See `planning.md` and `tasks.md` for roadmap
+## License
 
-## 📄 License
+Copyright (c) 2024. All rights reserved.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Support
 
----
-
-**Built with ❤️ for telecommunications testing excellence**
-
-*Last updated: August 28, 2025*
+For issues and questions, please refer to the project documentation or contact the development team.

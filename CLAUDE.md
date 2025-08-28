@@ -76,10 +76,10 @@ curl -X POST http://localhost:8080/api/v1/sync/cache/invalidate \
 
 ### Languages & Frameworks
 - **Java 17+**: Core backend language with modern features
-- **Spring Boot 3.x**: Enterprise application framework with security
-- **React 18+**: Modern frontend framework with TypeScript
+- **Spring Boot 3.5.5**: Enterprise application framework with security
+- **React 22**: Modern frontend framework with TypeScript
 - **PostgreSQL 14+**: Primary database with JSON support and triggers
-- **Redis 6+**: Distributed caching and session management
+- **Redis 8.2**: Distributed caching and session management
 
 ### Key Dependencies
 - **Backend Libraries**:
@@ -100,7 +100,7 @@ curl -X POST http://localhost:8080/api/v1/sync/cache/invalidate \
   - `smpp-core` - SMPP protocol implementation
 
 ### Build Tools & Testing
-- **Build**: Maven 3.8+ with multi-module support
+- **Build**: Maven 3.9 with multi-module support
 - **Testing**: JUnit 5, Mockito, TestContainers, Gatling for performance
 - **Code Quality**: SpotBugs, Checkstyle, JaCoCo for coverage
 - **API Documentation**: OpenAPI 3.0 with Swagger UI
@@ -182,6 +182,7 @@ This project is designed for **telecommunications subscription management** with
 - **Caching Strategy**: Implement cache-aside pattern with TTL management
 - **Error Handling**: Use structured error responses with correlation IDs
 - **Testing**: Maintain 90%+ test coverage with integration and performance tests
+- **Development Architecture**: Follow clean architecture for the implementation
 
 ### External Synchronization Requirements
 - **Change Detection**: External database changes must trigger cache invalidation within 30 seconds
@@ -215,7 +216,7 @@ For detailed implementation guidance, API specifications, and deployment procedu
 ## Quick Start
 
 ### Development Environment Setup
-1. **Prerequisites**: Java 17+, Node.js 18+, Docker, PostgreSQL 14+
+1. **Prerequisites**: Java 17+, Node.js 22, Docker, PostgreSQL 14+
 2. **Database**: `docker-compose up -d postgres redis`
 3. **Backend**: `./mvnw spring-boot:run`
 4. **Frontend**: `cd frontend && npm start`
