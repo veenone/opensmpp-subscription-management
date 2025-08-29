@@ -138,9 +138,31 @@ app:
       batch-size: 100
     external:
       enabled: true
-      polling-interval: 5000
+      polling-interval: 30000
+      batch-size: 100
       max-retries: 3
       retry-delay: 1000
+      max-processing-time-minutes: 10
+      health-check-threshold-minutes: 5
+      cleanup-retention-days: 30
+    webhook:
+      enabled: true
+      timeout: 5000
+      max-retries: 3
+      retry-delay: 1000
+      secret: ${WEBHOOK_SECRET:your-webhook-signing-secret}
+      endpoints:
+        - ${WEBHOOK_ENDPOINT_1:}
+        - ${WEBHOOK_ENDPOINT_2:}
+        - ${WEBHOOK_ENDPOINT_3:}
+    amarisoft:
+      enabled: true
+      host: ${AMARISOFT_HOST:localhost}
+      port: ${AMARISOFT_PORT:8080}
+      username: ${AMARISOFT_USERNAME:admin}
+      password: ${AMARISOFT_PASSWORD:admin}
+      timeout: 5000
+      max-retries: 3
   
   performance:
     subscription-lookup:
