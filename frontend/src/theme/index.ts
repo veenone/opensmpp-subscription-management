@@ -25,28 +25,8 @@ export {
   createMD3Theme,
   defaultThemeConfigs,
   
-  // Color utilities
-  generateCustomColorScheme,
-  getContrastRatio,
-  isAccessible,
-  brandColorSchemes,
-  
-  // Typography components
-  TypographyComponents,
-  
-  // Elevation components
-  ElevationComponents,
-  
-  // Motion components
-  MotionComponents,
-  
-  // Accessibility components
-  AccessibilityComponents,
-  
-  // Responsive components
-  ResponsiveComponents,
-  useBreakpoint,
-  
+  // Type definitions
+  ThemeConfig,
 } from './theme';
 
 // Default theme configurations for quick setup

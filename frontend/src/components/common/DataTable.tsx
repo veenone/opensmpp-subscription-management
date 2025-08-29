@@ -28,9 +28,6 @@ import {
   Search,
   FilterList,
   MoreVert,
-  Edit,
-  Delete,
-  Visibility,
   GetApp,
 } from '@mui/icons-material';
 import { LoadingSpinner } from './LoadingSpinner';

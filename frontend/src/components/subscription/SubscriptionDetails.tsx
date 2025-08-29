@@ -6,10 +6,8 @@ import {
   DialogActions,
   Box,
   Grid,
-  Card,
   CardContent,
   Chip,
-  Divider,
   List,
   ListItem,
   ListItemText,
@@ -25,7 +23,6 @@ import {
   TableRow,
   Paper,
   LinearProgress,
-  useTheme,
 } from '@mui/material';
 import {
   Close as CloseIcon,
@@ -56,8 +53,7 @@ import {
   MetricText
 } from '../../theme/typography';
 import { 
-  AccessibleButton,
-  HighContrastContainer 
+  AccessibleButton
 } from '../../theme/accessibility';
 import { 
   ResponsiveFlex,
@@ -65,7 +61,7 @@ import {
   ShowOn,
   useBreakpoint 
 } from '../../theme/responsive';
-import { FloatingCard, InteractiveElevationBox } from '../../theme/elevation';
+import { FloatingCard } from '../../theme/elevation';
 
 interface SubscriptionDetailsProps {
   open: boolean;
@@ -106,7 +102,6 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   subscriptionId,
   subscription: initialSubscription,
 }) => {
-  const theme = useTheme();
   const { hasPermission } = useAuth();
   const breakpoint = useBreakpoint();
 
@@ -117,26 +112,26 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   const [tabValue, setTabValue] = useState(0);
 
   // Mock data for demo purposes - would come from API
-  const [activityData, setActivityData] = useState([
+  const activityData = [
     { timestamp: '2024-01-20T10:30:00Z', event: 'SMS Sent', details: 'Message to +1234567890' },
     { timestamp: '2024-01-20T10:25:00Z', event: 'Registration', details: 'IMS registration successful' },
     { timestamp: '2024-01-20T09:45:00Z', event: 'Status Change', details: 'Changed to ACTIVE' },
-  ]);
+  ];
 
-  const [usageStats, setUsageStats] = useState({
+  const usageStats = {
     totalMessages: 1247,
     messagesThisMonth: 89,
     lastActivity: '2024-01-20T10:30:00Z',
     averageDaily: 12.5,
     uptime: 98.7,
-  });
+  };
 
   // Fetch subscription details
   const fetchSubscription = async (id: string) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await apiClient.get(`/api/subscriptions/${id}`);
+      const response = await apiClient.get(`/api/subscriptions/${id}`) as any;
       setSubscription(response.data);
     } catch (err) {
       setError('Failed to load subscription details. Please try again.');
@@ -161,7 +156,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
   }, [open, subscriptionId, initialSubscription]);
 
   // Handlers
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
@@ -176,7 +171,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
       case 'EXPIRED':
         return 'error' as const;
       default:
-        return 'neutral' as const;
+        return 'offline' as const;
     }
   };
 
@@ -219,13 +214,13 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
       }}
     >
       <DialogTitle>
-        <ResponsiveFlex justify="space-between" align="center">
+        <ResponsiveFlex justify={{ xs: "space-between" }} align={{ xs: "center" }}>
           <Box>
             <TitleLarge>
               Subscription Details
             </TitleLarge>
             {subscription && (
-              <ResponsiveFlex align="center" gap={1} sx={{ mt: 1 }}>
+              <ResponsiveFlex align={{ xs: "center" }} gap={1} sx={{ mt: 1 }}>
                 <MonospaceText sx={{ fontSize: '14px', color: 'text.secondary' }}>
                   ID: {subscription.id}
                 </MonospaceText>
@@ -297,7 +292,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             <TabPanel value={tabValue} index={0}>
               <Grid container spacing={3}>
                 {/* Basic Information Card */}
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <FloatingCard floating>
                     <CardContent>
                       <HeadlineMedium gutterBottom>
@@ -334,7 +329,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                           <ListItemText
                             primary="Status"
                             secondary={
-                              <ResponsiveFlex align="center" gap={1}>
+                              <ResponsiveFlex align={{ xs: "center" }} gap={1}>
                                 <StatusIndicator 
                                   status={getStatusColor(subscription.status)} 
                                   animated={subscription.status === 'ACTIVE'}
@@ -362,7 +357,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                 </Grid>
 
                 {/* Quick Stats Card */}
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <FloatingCard floating>
                     <CardContent>
                       <HeadlineMedium gutterBottom>
@@ -370,28 +365,28 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                       </HeadlineMedium>
                       
                       <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                        <Grid size={6}>
                           <Box sx={{ textAlign: 'center' }}>
                             <MetricText>{usageStats.totalMessages.toLocaleString()}</MetricText>
                             <DataText>Total Messages</DataText>
                           </Box>
                         </Grid>
                         
-                        <Grid item xs={6}>
+                        <Grid size={6}>
                           <Box sx={{ textAlign: 'center' }}>
                             <MetricText>{usageStats.messagesThisMonth}</MetricText>
                             <DataText>This Month</DataText>
                           </Box>
                         </Grid>
                         
-                        <Grid item xs={6}>
+                        <Grid size={6}>
                           <Box sx={{ textAlign: 'center' }}>
                             <MetricText>{usageStats.averageDaily}</MetricText>
                             <DataText>Daily Average</DataText>
                           </Box>
                         </Grid>
                         
-                        <Grid item xs={6}>
+                        <Grid size={6}>
                           <Box sx={{ textAlign: 'center' }}>
                             <MetricText>{usageStats.uptime}%</MetricText>
                             <DataText>Uptime</DataText>
@@ -410,7 +405,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
 
                 {/* Custom Attributes */}
                 {subscription.customAttributes && Object.keys(subscription.customAttributes).length > 0 && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <FloatingCard floating>
                       <CardContent>
                         <HeadlineMedium gutterBottom>
@@ -437,7 +432,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             {/* Technical Tab */}
             <TabPanel value={tabValue} index={1}>
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <FloatingCard floating>
                     <CardContent>
                       <HeadlineMedium gutterBottom>
@@ -467,7 +462,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                   </FloatingCard>
                 </Grid>
 
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <FloatingCard floating>
                     <CardContent>
                       <HeadlineMedium gutterBottom>
@@ -511,7 +506,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             {/* Usage Tab */}
             <TabPanel value={tabValue} index={2}>
               <Grid container spacing={3}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <FloatingCard floating>
                     <CardContent>
                       <HeadlineMedium gutterBottom>
@@ -519,7 +514,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                       </HeadlineMedium>
                       
                       <Grid container spacing={2}>
-                        <Grid item xs={12} sm={3}>
+                        <Grid size={{ xs: 12, sm: 3 }}>
                           <Box sx={{ textAlign: 'center', p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                             <MessageIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
                             <MetricText>{usageStats.totalMessages.toLocaleString()}</MetricText>
@@ -527,7 +522,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                           </Box>
                         </Grid>
                         
-                        <Grid item xs={12} sm={3}>
+                        <Grid size={{ xs: 12, sm: 3 }}>
                           <Box sx={{ textAlign: 'center', p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                             <TimelineIcon sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
                             <MetricText>{usageStats.messagesThisMonth}</MetricText>
@@ -535,7 +530,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                           </Box>
                         </Grid>
                         
-                        <Grid item xs={12} sm={3}>
+                        <Grid size={{ xs: 12, sm: 3 }}>
                           <Box sx={{ textAlign: 'center', p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                             <StorageIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
                             <MetricText>{usageStats.averageDaily}</MetricText>
@@ -543,7 +538,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                           </Box>
                         </Grid>
                         
-                        <Grid item xs={12} sm={3}>
+                        <Grid size={{ xs: 12, sm: 3 }}>
                           <Box sx={{ textAlign: 'center', p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
                             <SignalIcon sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
                             <MetricText>{usageStats.uptime}%</MetricText>
@@ -574,7 +569,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             <TabPanel value={tabValue} index={3}>
               {hasPermission('subscription:security') ? (
                 <Grid container spacing={3}>
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <FloatingCard floating>
                       <CardContent>
                         <HeadlineMedium gutterBottom>
@@ -668,7 +663,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
       </DialogContent>
 
       <DialogActions sx={{ p: 2 }}>
-        <ResponsiveFlex justify="space-between" width="100%">
+        <ResponsiveFlex justify={{ xs: "space-between" }} width="100%">
           <Box>
             {subscription && hasPermission('subscription:delete') && (
               <AccessibleButton

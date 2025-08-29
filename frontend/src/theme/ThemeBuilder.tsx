@@ -18,14 +18,11 @@ import {
   FormControlLabel,
   Button,
   Grid,
-  Divider,
   IconButton,
   Tooltip,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Slider,
-  ColorPicker,
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
@@ -33,7 +30,6 @@ import {
   Download as DownloadIcon,
   Upload as UploadIcon,
   Refresh as RefreshIcon,
-  Visibility as VisibilityIcon,
   Code as CodeIcon,
 } from '@mui/icons-material';
 import { useTheme, ThemeProvider } from '@mui/material/styles';
@@ -142,7 +138,7 @@ const ThemePreview: React.FC<{ theme: any }> = ({ theme }) => {
                 { name: 'Warning', color: theme.palette.warning?.main || '#ff9800' },
                 { name: 'Success', color: theme.palette.success?.main || '#4caf50' },
               ].map(({ name, color }) => (
-                <Grid item xs={2} key={name}>
+                <Grid size={2} key={name}>
                   <Box
                     sx={{
                       aspectRatio: '1',
@@ -220,7 +216,7 @@ const ThemePreview: React.FC<{ theme: any }> = ({ theme }) => {
                 { name: 'Container', color: theme.palette.surface?.container || theme.palette.background.paper },
                 { name: 'Container High', color: theme.palette.surface?.containerHigh || theme.palette.background.paper },
               ].map(({ name, color }, index) => (
-                <Grid item xs={4} key={name}>
+                <Grid size={4} key={name}>
                   <Box
                     sx={{
                       height: 60,
@@ -362,7 +358,7 @@ export const ThemeBuilder: React.FC<{
     <ResponsiveContainer maxWidth="xl">
       <Grid container spacing={3}>
         {/* Configuration Panel */}
-        <Grid item xs={12} lg={6}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
@@ -405,7 +401,7 @@ export const ThemeBuilder: React.FC<{
                 </AccordionSummary>
                 <AccordionDetails>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <FormControl fullWidth>
                         <InputLabel>Theme Mode</InputLabel>
                         <Select
@@ -419,7 +415,7 @@ export const ThemeBuilder: React.FC<{
                       </FormControl>
                     </Grid>
                     
-                    <Grid item xs={12} sm={6}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
                       <FormControl fullWidth>
                         <InputLabel>Brand Scheme</InputLabel>
                         <Select
@@ -448,7 +444,7 @@ export const ThemeBuilder: React.FC<{
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} sm={4}>
+                      <Grid size={{ xs: 12, sm: 4 }}>
                         <ColorInput
                           label="Primary Color"
                           value={customColors.primary}
@@ -457,7 +453,7 @@ export const ThemeBuilder: React.FC<{
                         />
                       </Grid>
                       
-                      <Grid item xs={12} sm={4}>
+                      <Grid size={{ xs: 12, sm: 4 }}>
                         <ColorInput
                           label="Secondary Color"
                           value={customColors.secondary}
@@ -466,7 +462,7 @@ export const ThemeBuilder: React.FC<{
                         />
                       </Grid>
                       
-                      <Grid item xs={12} sm={4}>
+                      <Grid size={{ xs: 12, sm: 4 }}>
                         <ColorInput
                           label="Tertiary Color"
                           value={customColors.tertiary}
@@ -486,7 +482,7 @@ export const ThemeBuilder: React.FC<{
                 </AccordionSummary>
                 <AccordionDetails>
                   <Grid container spacing={2}>
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <FormControlLabel
                         control={
                           <Switch
@@ -498,7 +494,7 @@ export const ThemeBuilder: React.FC<{
                       />
                     </Grid>
                     
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <FormControlLabel
                         control={
                           <Switch
@@ -510,7 +506,7 @@ export const ThemeBuilder: React.FC<{
                       />
                     </Grid>
                     
-                    <Grid item xs={12}>
+                    <Grid size={12}>
                       <FormControlLabel
                         control={
                           <Switch
@@ -560,7 +556,7 @@ export const ThemeBuilder: React.FC<{
         </Grid>
 
         {/* Live Preview */}
-        <Grid item xs={12} lg={6}>
+        <Grid size={{ xs: 12, lg: 6 }}>
           <ThemePreview theme={generatedTheme} />
         </Grid>
       </Grid>

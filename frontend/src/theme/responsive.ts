@@ -484,12 +484,3 @@ export const ResponsiveComponents = {
   ShowOn,
 };
 
-export {
-  breakpoints,
-  containerMaxWidths,
-  responsiveUtils,
-  useBreakpoint,
-  MobileFirst,
-  responsiveSpacing,
-  telecomResponsivePatterns,
-};

@@ -1,5 +1,5 @@
 // Date formatting utilities
-export const formatDate = (date: string | Date | null, format = 'MM/dd/yyyy'): string => {
+export const formatDate = (date: string | Date | null, _format = 'MM/dd/yyyy'): string => {
   if (!date) return '-';
   
   const d = new Date(date);

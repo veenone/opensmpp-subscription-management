@@ -3,8 +3,8 @@
  * Comprehensive animation and transition utilities
  */
 
-import { styled, keyframes, Keyframes } from '@mui/material/styles';
-import { Box, Fade, Slide, Zoom, Grow } from '@mui/material';
+import { styled, keyframes } from '@mui/material/styles';
+import { Box } from '@mui/material';
 import { motionTokens } from './tokens';
 
 // Motion duration presets
@@ -19,7 +19,6 @@ export const motionDurations = {
 
 // Motion easing presets
 export const motionEasing = {
-  linear: 'linear',
   ease: 'ease',
   easeIn: 'ease-in',
   easeOut: 'ease-out',
@@ -436,4 +435,3 @@ export const MotionComponents = {
   ParallaxBox,
 };
 
-export { animations, motionDurations, motionEasing, transitionConfigs, motionUtils };

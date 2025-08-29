@@ -64,7 +64,7 @@ export const isInRange = (value: number, min: number, max: number): boolean => {
 };
 
 export const hasMinLength = (value: string, minLength: number): boolean => {
-  return value && value.length >= minLength;
+  return Boolean(value && value.length >= minLength);
 };
 
 export const hasMaxLength = (value: string, maxLength: number): boolean => {

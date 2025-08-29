@@ -326,13 +326,13 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
 
           <Grid container spacing={3}>
             {/* Basic Information */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <HeadlineMedium gutterBottom>
                 Basic Information
               </HeadlineMedium>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={12} sm={6}>
               <AccessibleFormControl>
                 <TextField
                   label="MSISDN *"
@@ -353,7 +353,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </AccessibleFormControl>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={12} sm={6}>
               <AccessibleFormControl>
                 <FormControl fullWidth error={!!errors.status}>
                   <InputLabel>Status *</InputLabel>
@@ -372,7 +372,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </AccessibleFormControl>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <AccessibleFormControl>
                 <TextField
                   label="IMPU *"
@@ -385,7 +385,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </AccessibleFormControl>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <AccessibleFormControl>
                 <TextField
                   label="IMPI *"
@@ -399,7 +399,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
             </Grid>
 
             {/* Optional Fields */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={12} sm={6}>
               <AccessibleFormControl>
                 <TextField
                   label="Display Name"
@@ -417,7 +417,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </AccessibleFormControl>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid size={12} sm={6}>
               <AccessibleFormControl>
                 <TextField
                   label="Email"
@@ -432,7 +432,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
             </Grid>
 
             {/* Advanced Settings */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Divider sx={{ my: 2 }} />
               <AccessibleButton
                 variant="text"
@@ -444,12 +444,12 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </AccessibleButton>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Collapse in={showAdvanced}>
                 <Card variant="outlined">
                   <CardContent>
                     <Grid container spacing={2}>
-                      <Grid item xs={12} sm={6}>
+                      <Grid size={12} sm={6}>
                         <AccessibleFormControl>
                           <TextField
                             label="Max Sessions"
@@ -464,7 +464,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                         </AccessibleFormControl>
                       </Grid>
 
-                      <Grid item xs={12} sm={6}>
+                      <Grid size={12} sm={6}>
                         <AccessibleFormControl>
                           <TextField
                             label="Service Profile"
@@ -475,7 +475,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                         </AccessibleFormControl>
                       </Grid>
 
-                      <Grid item xs={12}>
+                      <Grid size={12}>
                         <FormControlLabel
                           control={
                             <Switch
@@ -495,7 +495,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
             {/* Security Settings */}
             {hasPermission('subscription:security') && (
               <>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <AccessibleButton
                     variant="text"
                     onClick={() => setShowSecurity(!showSecurity)}
@@ -506,12 +506,12 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                   </AccessibleButton>
                 </Grid>
 
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <Collapse in={showSecurity}>
                     <Card variant="outlined">
                       <CardContent>
                         <Grid container spacing={2}>
-                          <Grid item xs={12}>
+                          <Grid size={12}>
                             <AccessibleFormControl>
                               <TextField
                                 label={mode === 'create' ? 'Password *' : 'New Password'}
@@ -525,7 +525,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                             </AccessibleFormControl>
                           </Grid>
 
-                          <Grid item xs={12}>
+                          <Grid size={12}>
                             <FormControlLabel
                               control={
                                 <Switch
@@ -545,7 +545,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
             )}
 
             {/* Custom Attributes */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <AccessibleButton
                 variant="text"
                 onClick={() => setShowCustom(!showCustom)}
@@ -555,7 +555,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </AccessibleButton>
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Collapse in={showCustom}>
                 <Card variant="outlined">
                   <CardContent>
@@ -571,7 +571,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
 
                     {/* Add new attribute */}
                     <Grid container spacing={2} sx={{ mt: 1 }}>
-                      <Grid item xs={4}>
+                      <Grid size={4}>
                         <TextField
                           label="Key"
                           size="small"
@@ -580,7 +580,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                           fullWidth
                         />
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid size={6}>
                         <TextField
                           label="Value"
                           size="small"
@@ -589,7 +589,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                           fullWidth
                         />
                       </Grid>
-                      <Grid item xs={2}>
+                      <Grid size={2}>
                         <AccessibleButton
                           variant="outlined"
                           size="small"

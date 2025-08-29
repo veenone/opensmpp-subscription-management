@@ -325,7 +325,7 @@ const ExampleImplementation: React.FC = () => {
 
         {/* Subscriptions List */}
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs: 12, lg: 8 }}>
             <InteractiveElevationBox component="card" sx={{ height: '100%' }}>
               <Card sx={{ height: '100%' }}>
                 <CardContent>
@@ -422,7 +422,7 @@ const ExampleImplementation: React.FC = () => {
           </Grid>
           
           {/* Sidebar */}
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <DropShadowContainer level={2} color="primary">
               <Card>
                 <CardContent>

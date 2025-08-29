@@ -10,6 +10,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   refreshToken: () => Promise<void>;
+  hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -65,6 +66,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     toast.info('Logged out successfully');
+  };
+
+  const hasPermission = (permission: string): boolean => {
+    if (!user || !user.roles) return false;
+    return user.roles.some((role: any) => 
+      role.permissions?.some((perm: any) => perm.name === permission)
+    );
   };
 
   const refreshToken = async () => {
@@ -159,6 +167,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     isLoading,
     refreshToken,
+    hasPermission,
   };
 
   return (

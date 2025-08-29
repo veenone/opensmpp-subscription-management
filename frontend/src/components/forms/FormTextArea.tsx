@@ -1,4 +1,3 @@
-import React from 'react';
 import { Controller, FieldPath, FieldValues, Control } from 'react-hook-form';
 import {
   TextField,
@@ -46,7 +45,7 @@ export const FormTextArea = <TFieldValues extends FieldValues = FieldValues, TNa
       }}
       render={({ field: { onChange, onBlur, value, ref }, fieldState: { error } }) => {
         const currentLength = (value || '').length;
-        const isOverLimit = maxLength && currentLength > maxLength;
+        const isOverLimit = Boolean(maxLength && currentLength > maxLength);
 
         return (
           <Box>

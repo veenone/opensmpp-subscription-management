@@ -457,4 +457,3 @@ export const AccessibilityComponents = {
   ContrastIndicator,
 };
 
-export { WCAG_CONTRAST_RATIOS, WCAG_FONT_SIZES, a11yUtils, a11yTesting };

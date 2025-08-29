@@ -240,7 +240,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 { name: 'Warning', color: theme.palette.warning?.main || '#ff9800', onColor: '#000000' },
                 { name: 'Success', color: theme.palette.success?.main || '#4caf50', onColor: '#ffffff' },
               ].map(({ name, color, onColor }) => (
-                <Grid item xs={6} sm={4} md={2} key={name}>
+                <Grid size={{ xs: 6, sm: 4, md: 2 }} key={name}>
                   <Box
                     sx={{
                       aspectRatio: '1',
@@ -282,7 +282,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 { name: 'Container', color: theme.palette.surface?.container || theme.palette.background.paper },
                 { name: 'Container High', color: theme.palette.surface?.containerHigh || theme.palette.background.paper },
               ].map(({ name, color }) => (
-                <Grid item xs={6} sm={3} key={name}>
+                <Grid size={{ xs: 6, sm: 3 }} key={name}>
                   <Box
                     sx={{
                       height: 80,
@@ -331,14 +331,14 @@ export const DesignSystemShowcase: React.FC = () => {
             description="Custom typography components for telecommunications data"
           >
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <MonospaceText>
                   IMSI: 310410123456789{'\n'}
                   MSISDN: +1-555-0123{'\n'}
                   Status: ACTIVE
                 </MonospaceText>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <StatusText status="online">Network Online</StatusText>
                 <br />
                 <StatusText status="warning">High Traffic</StatusText>
@@ -383,13 +383,13 @@ export const DesignSystemShowcase: React.FC = () => {
             description="Input components with validation and accessibility features"
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField fullWidth label="Text Field" variant="outlined" />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField fullWidth label="Required Field" variant="outlined" required />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField 
                   fullWidth 
                   label="Error State" 
@@ -398,7 +398,7 @@ export const DesignSystemShowcase: React.FC = () => {
                   helperText="This field has an error"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField 
                   fullWidth 
                   label="Disabled" 
@@ -479,7 +479,7 @@ export const DesignSystemShowcase: React.FC = () => {
             description="Components for user feedback and status communication"
           >
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid size={12}>
                 <Alert severity="info" sx={{ mb: 2 }}>
                   This is an info alert with a message.
                 </Alert>
@@ -494,14 +494,14 @@ export const DesignSystemShowcase: React.FC = () => {
                 </Alert>
               </Grid>
               
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography gutterBottom>Linear Progress</Typography>
                 <LinearProgress value={60} variant="determinate" sx={{ mb: 2 }} />
                 <LinearProgress sx={{ mb: 2 }} />
                 <AnimatedProgressBar progress={75} color="primary" />
               </Grid>
               
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography gutterBottom>Circular Progress</Typography>
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                   <CircularProgress size={24} />
@@ -523,7 +523,7 @@ export const DesignSystemShowcase: React.FC = () => {
           >
             <Grid container spacing={2}>
               {[0, 1, 2, 3, 4, 5].map((level) => (
-                <Grid item xs={6} sm={4} md={2} key={level}>
+                <Grid size={{ xs: 6, sm: 4, md: 2 }} key={level}>
                   <InteractiveElevationBox
                     component="card"
                     sx={{
@@ -616,7 +616,7 @@ export const DesignSystemShowcase: React.FC = () => {
             description="Motion design with proper accessibility considerations"
           >
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography gutterBottom>Loading States</Typography>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
                   <SkeletonLoader width={100} height={20} />
@@ -629,7 +629,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 </SpinningBox>
               </Grid>
               
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography gutterBottom>Status Indicators</Typography>
                 <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 1 }}>
                   <StatusIndicator status="online" animated />
@@ -652,7 +652,7 @@ export const DesignSystemShowcase: React.FC = () => {
             description="Hover and interaction states with smooth transitions"
           >
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid size={{ xs: 12, sm: 6 }} md={3}>
                 <FloatingCard floating hoverFloat sx={{ p: 2, textAlign: 'center' }}>
                   <Typography variant="titleMedium">Floating Card</Typography>
                   <Typography variant="bodySmall" color="text.secondary">
@@ -661,7 +661,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 </FloatingCard>
               </Grid>
               
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid size={{ xs: 12, sm: 6 }} md={3}>
                 <AnimatedElevationBox
                   elevation={1}
                   hoverElevation={3}
@@ -674,7 +674,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 </AnimatedElevationBox>
               </Grid>
               
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid size={{ xs: 12, sm: 6 }} md={3}>
                 <DropShadowContainer
                   level={2}
                   color="primary"
@@ -687,7 +687,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 </DropShadowContainer>
               </Grid>
               
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid size={{ xs: 12, sm: 6 }} md={3}>
                 <AnimatedBox
                   animation="scaleIn"
                   duration="medium"
@@ -754,7 +754,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 { bg: theme.palette.error.main, text: theme.palette.error.contrastText, label: 'Error' },
                 { bg: theme.palette.background.paper, text: theme.palette.text.primary, label: 'Surface' },
               ].map(({ bg, text, label }) => (
-                <Grid item xs={6} sm={3} key={label}>
+                <Grid size={{ xs: 6, sm: 3 }} key={label}>
                   <Box
                     sx={{
                       backgroundColor: bg,
@@ -787,7 +787,7 @@ export const DesignSystemShowcase: React.FC = () => {
             description="Common UI patterns for SMPP and telecommunications applications"
           >
             <Grid container spacing={3}>
-              <Grid item xs={12} md={4}>
+              <Grid size={12} md={4}>
                 <Card>
                   <CardContent>
                     <Typography variant="titleMedium" gutterBottom>
@@ -811,7 +811,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 </Card>
               </Grid>
               
-              <Grid item xs={12} md={4}>
+              <Grid size={12} md={4}>
                 <Card>
                   <CardContent>
                     <Typography variant="titleMedium" gutterBottom>
@@ -836,7 +836,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 </Card>
               </Grid>
               
-              <Grid item xs={12} md={4}>
+              <Grid size={12} md={4}>
                 <Card>
                   <CardContent>
                     <Typography variant="titleMedium" gutterBottom>

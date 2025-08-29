@@ -338,4 +338,3 @@ export const ElevationComponents = {
   RippleEffect,
 };
 
-export { elevationLevels, elevationUtils, elevationStates };

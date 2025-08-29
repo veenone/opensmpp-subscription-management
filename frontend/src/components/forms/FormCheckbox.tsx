@@ -1,4 +1,3 @@
-import React from 'react';
 import { Controller, FieldPath, FieldValues, Control } from 'react-hook-form';
 import {
   FormControl,
@@ -100,7 +99,7 @@ export const FormCheckboxGroup = <TFieldValues extends FieldValues = FieldValues
       control={control}
       rules={rules}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        const selectedValues = value || [];
+        const selectedValues: (string | number)[] = value || [];
 
         const handleChange = (optionValue: string | number, checked: boolean) => {
           let newValues: (string | number)[];

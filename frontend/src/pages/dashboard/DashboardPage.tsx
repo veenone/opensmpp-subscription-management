@@ -38,7 +38,7 @@ const StatCard: React.FC<StatCardProps> = ({
   color, 
   trend,
   loading = false 
-icon => {
+}) => {
   return (
     <Card elevation={2} sx={{ height: '100%', minHeight: 150 }}>
       <CardContent>
@@ -80,9 +80,7 @@ icon => {
               justifyContent: 'center',
             }}
           >
-            {
-              
-            icon}
+            {icon}
           </Box>
         </Box>
       </CardContent>
@@ -102,7 +100,7 @@ export default function DashboardPage() {
     queryFn: () => subscriptionApi.getStatistics(),
     refetchInterval: 30000,
     staleTime: 15000,
-  icon;
+  });
 
   const handleRefresh = () => {
     refetch();
