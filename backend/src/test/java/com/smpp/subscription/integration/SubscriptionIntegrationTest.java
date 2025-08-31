@@ -71,7 +71,7 @@ public class SubscriptionIntegrationTest {
                 .msisdn("+1234567890")
                 .impi("test@example.com")
                 .impu("sip:test@example.com")
-                .status("ACTIVE")
+                .status(Subscription.SubscriptionStatus.ACTIVE)
                 .build();
 
         // Act & Assert
@@ -94,7 +94,7 @@ public class SubscriptionIntegrationTest {
                 .msisdn("invalid-msisdn")
                 .impi("test@example.com")
                 .impu("sip:test@example.com")
-                .status("ACTIVE")
+                .status(Subscription.SubscriptionStatus.ACTIVE)
                 .build();
 
         // Act & Assert
@@ -139,7 +139,7 @@ public class SubscriptionIntegrationTest {
         // Act & Assert
         mockMvc.perform(get("/api/v1/subscriptions/msisdn/{msisdn}", "+1234567890"))
                 .andExpect(status().isOk())
-                .andExpected(jsonPath("$.msisdn").value("+1234567890"));
+                .andExpect(jsonPath("$.msisdn").value("+1234567890"));
     }
 
     @Test
@@ -163,9 +163,9 @@ public class SubscriptionIntegrationTest {
                 .param("sortBy", "createdAt")
                 .param("sortDir", "desc"))
                 .andExpect(status().isOk())
-                .andExpected(jsonPath("$.content", hasSize(3)))
-                .andExpected(jsonPath("$.totalElements").value(5))
-                .andExpected(jsonPath("$.totalPages").value(2));
+                .andExpect(jsonPath("$.content", hasSize(3)))
+                .andExpect(jsonPath("$.totalElements").value(5))
+                .andExpect(jsonPath("$.totalPages").value(2));
     }
 
     @Test
@@ -184,7 +184,7 @@ public class SubscriptionIntegrationTest {
                 .msisdn("+1234567890")
                 .impi("updated@example.com")
                 .impu("sip:updated@example.com")
-                .status("INACTIVE")
+                .status(Subscription.SubscriptionStatus.INACTIVE)
                 .build();
 
         // Act & Assert
@@ -192,8 +192,8 @@ public class SubscriptionIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
-                .andExpected(jsonPath("$.impi").value("updated@example.com"))
-                .andExpected(jsonPath("$.status").value("INACTIVE"));
+                .andExpect(jsonPath("$.impi").value("updated@example.com"))
+                .andExpect(jsonPath("$.status").value("INACTIVE"));
     }
 
     @Test
@@ -214,7 +214,7 @@ public class SubscriptionIntegrationTest {
 
         // Verify deletion
         mockMvc.perform(get("/api/v1/subscriptions/{id}", subscription.getId()))
-                .andExpected(status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -229,16 +229,16 @@ public class SubscriptionIntegrationTest {
         mockMvc.perform(post("/api/v1/subscriptions/bulk-import")
                 .contentType(MediaType.TEXT_PLAIN)
                 .content(csvData))
-                .andExpected(status().isOk())
-                .andExpected(jsonPath("$.successfulImports").value(2))
-                .andExpected(jsonPath("$.failedImports").value(0));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.successfulImports").value(2))
+                .andExpect(jsonPath("$.failedImports").value(0));
     }
 
     @Test
     void getSubscriptions_UnauthorizedAccess_Forbidden() throws Exception {
         // Act & Assert
         mockMvc.perform(get("/api/v1/subscriptions"))
-                .andExpected(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -249,13 +249,13 @@ public class SubscriptionIntegrationTest {
                 .msisdn("+1234567890")
                 .impi("test@example.com")
                 .impu("sip:test@example.com")
-                .status("ACTIVE")
+                .status(Subscription.SubscriptionStatus.ACTIVE)
                 .build();
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/subscriptions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpected(status().isForbidden());
+                .andExpect(status().isForbidden());
     }
 }

@@ -48,13 +48,9 @@ public class TestDataBuilder {
      * Create a Subscription with specific MSISDN
      */
     public static Subscription createSubscription(String msisdn) {
-        return Subscription.builder()
+        return createSubscription()
+            .toBuilder()
             .msisdn(msisdn)
-            .impi(generateImpi())
-            .impu(generateImpu())
-            .status(getRandomStatus())
-            .createdAt(LocalDateTime.now().minusDays(faker.number().numberBetween(1, 365)))
-            .updatedAt(LocalDateTime.now().minusHours(faker.number().numberBetween(1, 24)))
             .build();
     }
     
@@ -62,13 +58,9 @@ public class TestDataBuilder {
      * Create a Subscription with specific status
      */
     public static Subscription createSubscription(Subscription.SubscriptionStatus status) {
-        return Subscription.builder()
-            .msisdn(generateValidMsisdn())
-            .impi(generateImpi())
-            .impu(generateImpu())
+        return createSubscription()
+            .toBuilder()
             .status(status)
-            .createdAt(LocalDateTime.now().minusDays(faker.number().numberBetween(1, 365)))
-            .updatedAt(LocalDateTime.now().minusHours(faker.number().numberBetween(1, 24)))
             .build();
     }
     
@@ -76,13 +68,10 @@ public class TestDataBuilder {
      * Create a Subscription with specific MSISDN and status
      */
     public static Subscription createSubscription(String msisdn, Subscription.SubscriptionStatus status) {
-        return Subscription.builder()
+        return createSubscription()
+            .toBuilder()
             .msisdn(msisdn)
-            .impi(generateImpi())
-            .impu(generateImpu())
             .status(status)
-            .createdAt(LocalDateTime.now().minusDays(faker.number().numberBetween(1, 365)))
-            .updatedAt(LocalDateTime.now().minusHours(faker.number().numberBetween(1, 24)))
             .build();
     }
     
@@ -111,11 +100,9 @@ public class TestDataBuilder {
      * Create SubscriptionRequestDto with specific MSISDN
      */
     public static SubscriptionRequestDto createSubscriptionRequestDto(String msisdn) {
-        return SubscriptionRequestDto.builder()
+        return createSubscriptionRequestDto()
+            .toBuilder()
             .msisdn(msisdn)
-            .impi(generateImpi())
-            .impu(generateImpu())
-            .status(getRandomStatus())
             .build();
     }
     
@@ -179,12 +166,14 @@ public class TestDataBuilder {
     public static ExternalChange createExternalChange() {
         return ExternalChange.builder()
             .tableName("subscriptions")
-            .operation(getRandomChangeOperationType())
+            .operation(getRandomChangeOperation())
             .entityId(faker.number().randomNumber())
+            .msisdn(generateValidMsisdn())
             .oldData(Map.of("status", "ACTIVE"))
             .newData(Map.of("status", "SUSPENDED"))
             .changedAt(LocalDateTime.now().minusMinutes(faker.number().numberBetween(1, 60)))
             .processed(false)
+            .retryCount(0)
             .build();
     }
     
@@ -197,8 +186,10 @@ public class TestDataBuilder {
             .email(faker.internet().emailAddress())
             .firstName(faker.name().firstName())
             .lastName(faker.name().lastName())
-            .isActive(true)
-            .isLocked(false)
+            .enabled(true)
+            .accountNonExpired(true)
+            .accountNonLocked(true)
+            .credentialsNonExpired(true)
             .createdAt(LocalDateTime.now().minusDays(faker.number().numberBetween(1, 100)))
             .build();
     }
@@ -258,11 +249,6 @@ public class TestDataBuilder {
      */
     public static String getRandomChangeOperation() {
         String[] operations = {"INSERT", "UPDATE", "DELETE"};
-        return operations[faker.number().numberBetween(0, operations.length)];
-    }
-    
-    public static ExternalChange.OperationType getRandomChangeOperationType() {
-        ExternalChange.OperationType[] operations = ExternalChange.OperationType.values();
         return operations[faker.number().numberBetween(0, operations.length)];
     }
     

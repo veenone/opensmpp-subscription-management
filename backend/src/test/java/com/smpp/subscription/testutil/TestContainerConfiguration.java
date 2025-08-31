@@ -91,7 +91,7 @@ public class TestContainerConfiguration {
      */
     public static void executeInPostgres(String sql) {
         try {
-            postgres.execInContainer("psql", "-U", postgres.getUsername(), 
+            postgres.execInContainer("psql", "-U", postgres.getUsername(),
                     "-d", postgres.getDatabaseName(), "-c", sql);
         } catch (Exception e) {
             log.warn("Failed to execute SQL: {}", sql, e);
@@ -111,7 +111,10 @@ public class TestContainerConfiguration {
      */
     public static void executeInRedis(String... command) {
         try {
-            redis.execInContainer("redis-cli", command);
+            String[] fullCommand = new String[command.length + 1];
+            fullCommand[0] = "redis-cli";
+            System.arraycopy(command, 0, fullCommand, 1, command.length);
+            redis.execInContainer(fullCommand);
         } catch (Exception e) {
             log.warn("Failed to execute Redis command: {}", String.join(" ", command), e);
         }

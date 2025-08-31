@@ -122,7 +122,7 @@ class SubscriptionServiceTest {
     @Test
     void updateSubscription_Success() {
         // Arrange
-        Subscription updatedSubscription = testSubscription.toBuilder()
+        Subscription updatedSubscription = Subscription.builder().msisdn(testSubscription.getMsisdn())
                 .status(Subscription.SubscriptionStatus.INACTIVE)
                 .build();
         
