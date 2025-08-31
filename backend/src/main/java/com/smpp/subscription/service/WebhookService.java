@@ -8,6 +8,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.retry.annotation.Backoff;
@@ -29,7 +30,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class WebhookService {
 
@@ -37,6 +37,16 @@ public class WebhookService {
     private final ObjectMapper objectMapper;
     private final AuditService auditService;
     private final MeterRegistry meterRegistry;
+
+    public WebhookService(@Qualifier("syncRestTemplate") RestTemplate restTemplate,
+                         ObjectMapper objectMapper,
+                         AuditService auditService,
+                         MeterRegistry meterRegistry) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+        this.auditService = auditService;
+        this.meterRegistry = meterRegistry;
+    }
 
     // Configuration
     @Value("${app.sync.webhook.endpoints:}")
@@ -285,7 +295,7 @@ public class WebhookService {
                 .endpoints(webhookEndpoints)
                 .successfulNotifications((long) webhooksSuccessCounter.count())
                 .failedNotifications((long) webhooksFailureCounter.count())
-                .averageExecutionTime(webhookExecutionTimer.mean())
+                .averageExecutionTime(webhookExecutionTimer.mean(java.util.concurrent.TimeUnit.MILLISECONDS))
                 .maxRetries(maxRetries)
                 .timeoutMs(webhookTimeoutMs)
                 .build();

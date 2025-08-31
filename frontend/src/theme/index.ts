@@ -24,8 +24,10 @@ export {
   // Theme creation
   createMD3Theme,
   defaultThemeConfigs,
-  
-  // Type definitions
+} from './theme';
+
+// Re-export types separately for isolatedModules compatibility
+export type {
   ThemeConfig,
 } from './theme';
 

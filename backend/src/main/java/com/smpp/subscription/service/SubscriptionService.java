@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -32,6 +33,7 @@ import java.util.List;
 public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
+    private final AuditService auditService;
 
     @Transactional
     public Subscription createSubscription(Subscription subscription) {
@@ -58,15 +60,11 @@ public class SubscriptionService {
         }
         
         log.info("Creating new subscription for MSISDN: {}", subscription.getMsisdn());
-        return subscriptionRepository.save(subscription);
+        Subscription savedSubscription = subscriptionRepository.save(subscription);
+        auditService.logSubscriptionCreate(savedSubscription, getCurrentUser());
+        return savedSubscription;
     }
 
-    @Transactional(readOnly = true)
-    @Cacheable(value = "subscriptions", key = "#msisdn")
-    public Subscription getSubscriptionByMsisdn(String msisdn) {
-        return subscriptionRepository.findByMsisdn(msisdn)
-                .orElseThrow(() -> new EntityNotFoundException("Subscription not found"));
-    }
 
     @Transactional
     @CacheEvict(value = "subscriptions", key = "#subscription.msisdn")
@@ -101,11 +99,20 @@ public class SubscriptionService {
     }
 
     /**
-     * Get subscription by ID with caching.
+     * Get subscription by ID with caching (returns Optional for test compatibility).
      */
     @Transactional(readOnly = true)
     @Cacheable(value = "subscriptions", key = "#id")
-    public Subscription getSubscriptionById(Long id) {
+    public Optional<Subscription> getSubscriptionById(Long id) {
+        return subscriptionRepository.findById(id);
+    }
+
+    /**
+     * Get subscription by ID - throws exception if not found.
+     */
+    @Transactional(readOnly = true)
+    @Cacheable(value = "subscriptions", key = "#id")
+    public Subscription findSubscriptionById(Long id) {
         return subscriptionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Subscription with ID " + id + " not found"));
     }
@@ -116,7 +123,11 @@ public class SubscriptionService {
     @Transactional
     @CacheEvict(value = "subscriptions", allEntries = true)
     public Subscription updateSubscriptionById(Long id, Subscription updateData) {
-        Subscription existingSubscription = getSubscriptionById(id);
+        Optional<Subscription> existingOptional = getSubscriptionById(id);
+        if (existingOptional.isEmpty()) {
+            throw new EntityNotFoundException("Subscription with ID " + id + " not found");
+        }
+        Subscription existingSubscription = existingOptional.get();
         
         // Validate MSISDN if it's being updated
         if (updateData.getMsisdn() != null && 
@@ -161,7 +172,9 @@ public class SubscriptionService {
         }
         
         log.info("Updating subscription ID: {}, MSISDN: {}", id, existingSubscription.getMsisdn());
-        return subscriptionRepository.save(existingSubscription);
+        Subscription updatedSubscription = subscriptionRepository.save(existingSubscription);
+        auditService.logSubscriptionUpdate(existingSubscription, updatedSubscription, getCurrentUser());
+        return updatedSubscription;
     }
 
     /**
@@ -170,9 +183,14 @@ public class SubscriptionService {
     @Transactional
     @CacheEvict(value = "subscriptions", allEntries = true)
     public void deleteSubscriptionById(Long id) {
-        Subscription subscription = getSubscriptionById(id);
+        Optional<Subscription> subscriptionOptional = getSubscriptionById(id);
+        if (subscriptionOptional.isEmpty()) {
+            throw new EntityNotFoundException("Subscription with ID " + id + " not found");
+        }
+        Subscription subscription = subscriptionOptional.get();
         log.info("Deleting subscription ID: {}, MSISDN: {}", id, subscription.getMsisdn());
         subscriptionRepository.delete(subscription);
+        auditService.logSubscriptionDelete(subscription, getCurrentUser());
     }
 
     /**
@@ -412,5 +430,99 @@ public class SubscriptionService {
         if (dto.getStatus() == null) {
             throw new IllegalArgumentException("Status is required");
         }
+    }
+
+    // Additional methods expected by tests
+
+    /**
+     * Get subscription by MSISDN returning Optional.
+     */
+    @Transactional(readOnly = true)
+    public Optional<Subscription> getSubscriptionByMsisdn(String msisdn) {
+        return subscriptionRepository.findByMsisdn(msisdn);
+    }
+
+    /**
+     * Update subscription by ID (test-compatible signature).
+     */
+    @Transactional
+    @CacheEvict(value = "subscriptions", allEntries = true)
+    public Subscription updateSubscription(Long id, Subscription updateData) {
+        return updateSubscriptionById(id, updateData);
+    }
+
+    /**
+     * Delete subscription by ID (test-compatible signature).
+     */
+    @Transactional
+    @CacheEvict(value = "subscriptions", allEntries = true)
+    public void deleteSubscription(Long id) {
+        deleteSubscriptionById(id);
+    }
+
+    /**
+     * Get paginated subscriptions (test-compatible signature).
+     */
+    @Transactional(readOnly = true)
+    public Page<Subscription> getAllSubscriptions(Pageable pageable) {
+        return getSubscriptions(pageable);
+    }
+
+    /**
+     * Search subscriptions with filters (test-compatible signature).
+     */
+    @Transactional(readOnly = true)
+    public Page<Subscription> searchSubscriptions(String msisdn, Subscription.SubscriptionStatus status, Pageable pageable) {
+        return subscriptionRepository.findByStatusAndMsisdnContaining(status, msisdn, pageable);
+    }
+
+    /**
+     * Bulk import subscriptions (test-compatible signature).
+     */
+    @Transactional
+    @CacheEvict(value = "subscriptions", allEntries = true)
+    public List<Subscription> bulkImport(List<Subscription> subscriptions) {
+        List<Subscription> saved = subscriptionRepository.saveAll(subscriptions);
+        auditService.logBulkImport(subscriptions, getCurrentUser());
+        return saved;
+    }
+
+    /**
+     * Get subscription statistics.
+     */
+    @Transactional(readOnly = true)
+    public SubscriptionStatistics getSubscriptionStatistics() {
+        long totalSubscriptions = subscriptionRepository.count();
+        long activeSubscriptions = subscriptionRepository.countByStatus(Subscription.SubscriptionStatus.ACTIVE);
+        long inactiveSubscriptions = subscriptionRepository.countByStatus(Subscription.SubscriptionStatus.INACTIVE);
+
+        return new SubscriptionStatistics(totalSubscriptions, activeSubscriptions, inactiveSubscriptions);
+    }
+
+    /**
+     * Get current user from security context.
+     */
+    private String getCurrentUser() {
+        // This would typically extract from SecurityContext
+        return "SYSTEM";
+    }
+
+    /**
+     * Statistics data class.
+     */
+    public static class SubscriptionStatistics {
+        private final long totalSubscriptions;
+        private final long activeSubscriptions;
+        private final long inactiveSubscriptions;
+
+        public SubscriptionStatistics(long totalSubscriptions, long activeSubscriptions, long inactiveSubscriptions) {
+            this.totalSubscriptions = totalSubscriptions;
+            this.activeSubscriptions = activeSubscriptions;
+            this.inactiveSubscriptions = inactiveSubscriptions;
+        }
+
+        public long getTotalSubscriptions() { return totalSubscriptions; }
+        public long getActiveSubscriptions() { return activeSubscriptions; }
+        public long getInactiveSubscriptions() { return inactiveSubscriptions; }
     }
 }

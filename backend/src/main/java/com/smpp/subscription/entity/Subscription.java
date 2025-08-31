@@ -3,6 +3,8 @@ package com.smpp.subscription.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,7 +13,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "subscriptions", 
        uniqueConstraints = {
@@ -40,6 +44,7 @@ public class Subscription {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
+    @Builder.Default
     private SubscriptionStatus status = SubscriptionStatus.ACTIVE;
 
     @CreationTimestamp
@@ -52,6 +57,7 @@ public class Subscription {
 
     public enum SubscriptionStatus {
         ACTIVE,
+        INACTIVE,
         SUSPENDED,
         TERMINATED
     }

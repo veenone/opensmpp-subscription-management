@@ -29,53 +29,57 @@ public class MsisdnValidator {
     private static final Pattern COUNTRY_CODE_PATTERN = Pattern.compile("^\\+([1-9]\\d{0,2})");
     
     // Common country codes for validation (not exhaustive but covers major regions)
-    private static final Map<String, String> COUNTRY_CODES = Map.of(
-        "1", "North America (US, Canada)",
-        "7", "Russia/Kazakhstan",
-        "20", "Egypt",
-        "27", "South Africa",
-        "30", "Greece",
-        "31", "Netherlands",
-        "32", "Belgium",
-        "33", "France",
-        "34", "Spain",
-        "39", "Italy",
-        "40", "Romania",
-        "41", "Switzerland",
-        "43", "Austria",
-        "44", "United Kingdom",
-        "45", "Denmark",
-        "46", "Sweden",
-        "47", "Norway",
-        "48", "Poland",
-        "49", "Germany",
-        "51", "Peru",
-        "52", "Mexico",
-        "53", "Cuba",
-        "54", "Argentina",
-        "55", "Brazil",
-        "56", "Chile",
-        "57", "Colombia",
-        "58", "Venezuela",
-        "60", "Malaysia",
-        "61", "Australia",
-        "62", "Indonesia",
-        "63", "Philippines",
-        "64", "New Zealand",
-        "65", "Singapore",
-        "66", "Thailand",
-        "81", "Japan",
-        "82", "South Korea",
-        "84", "Vietnam",
-        "86", "China",
-        "90", "Turkey",
-        "91", "India",
-        "92", "Pakistan",
-        "93", "Afghanistan",
-        "94", "Sri Lanka",
-        "95", "Myanmar",
-        "98", "Iran"
-    );
+    private static final Map<String, String> COUNTRY_CODES;
+    
+    static {
+        Map<String, String> codes = new java.util.HashMap<>();
+        codes.put("1", "North America (US, Canada)");
+        codes.put("7", "Russia/Kazakhstan");
+        codes.put("20", "Egypt");
+        codes.put("27", "South Africa");
+        codes.put("30", "Greece");
+        codes.put("31", "Netherlands");
+        codes.put("32", "Belgium");
+        codes.put("33", "France");
+        codes.put("34", "Spain");
+        codes.put("39", "Italy");
+        codes.put("40", "Romania");
+        codes.put("41", "Switzerland");
+        codes.put("43", "Austria");
+        codes.put("44", "United Kingdom");
+        codes.put("45", "Denmark");
+        codes.put("46", "Sweden");
+        codes.put("47", "Norway");
+        codes.put("48", "Poland");
+        codes.put("49", "Germany");
+        codes.put("51", "Peru");
+        codes.put("52", "Mexico");
+        codes.put("53", "Cuba");
+        codes.put("54", "Argentina");
+        codes.put("55", "Brazil");
+        codes.put("56", "Chile");
+        codes.put("57", "Colombia");
+        codes.put("58", "Venezuela");
+        codes.put("60", "Malaysia");
+        codes.put("61", "Australia");
+        codes.put("62", "Indonesia");
+        codes.put("63", "Philippines");
+        codes.put("64", "New Zealand");
+        codes.put("65", "Singapore");
+        codes.put("66", "Thailand");
+        codes.put("81", "Japan");
+        codes.put("82", "South Korea");
+        codes.put("84", "Vietnam");
+        codes.put("86", "China");
+        codes.put("90", "Turkey");
+        codes.put("91", "India");
+        codes.put("92", "Pakistan");
+        codes.put("93", "Afghanistan");
+        codes.put("94", "Sri Lanka");
+        codes.put("95", "Myanmar");
+        codes.put("98", "Iran");
+        COUNTRY_CODES = java.util.Collections.unmodifiableMap(codes);
+    }
 
     /**
      * Validates if the given MSISDN follows E.164 format.

@@ -24,8 +24,45 @@ A modern subscription management system that transforms static properties file-b
 - Java 17+
 - Node.js 18+
 - Docker and Docker Compose
-- PostgreSQL 14+ (or use Docker)
-- Redis 6+ (or use Docker)
+- Git
+
+### Database Setup (5 minutes)
+
+The system requires PostgreSQL and Redis. The easiest way is using Docker:
+
+#### Option 1: Quick Docker Setup (Recommended)
+```bash
+# Start PostgreSQL and Redis containers
+docker-compose up -d postgres redis
+
+# Verify containers are running
+docker-compose ps
+```
+
+**Default Database Configuration:**
+- **Database**: `smpp_subscriptions`
+- **Username**: `postgres` 
+- **Password**: `postgres`
+- **PostgreSQL Port**: `5432`
+- **Redis Port**: `6379`
+- **Redis Password**: `redis_password`
+
+#### Option 2: Manual Database Setup
+If you prefer local installations:
+
+**PostgreSQL:**
+```bash
+# Create database and user
+psql -U postgres -c "CREATE DATABASE smpp_subscriptions;"
+psql -U postgres -c "CREATE USER smpp_user WITH PASSWORD 'smpp_password_2024';"
+psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE smpp_subscriptions TO smpp_user;"
+```
+
+**Redis:**
+```bash
+# Start Redis with password
+redis-server --requirepass redis_password
+```
 
 ### Development Setup
 
@@ -34,26 +71,36 @@ A modern subscription management system that transforms static properties file-b
 docker-compose up -d postgres redis
 ```
 
-2. **Run Backend Application**
+2. **Verify Database Connection**
+```bash
+# Test PostgreSQL connection
+docker exec -it smpp_postgres psql -U postgres -d smpp_subscriptions -c "SELECT version();"
+
+# Test Redis connection  
+docker exec -it smpp_redis redis-cli -a redis_password ping
+```
+
+3. **Run Backend Application**
 ```bash
 ./mvnw spring-boot:run
 ```
 
-3. **Install Frontend Dependencies**
+4. **Install Frontend Dependencies**
 ```bash
 cd frontend
 npm install
 ```
 
-4. **Start Frontend Development Server**
+5. **Start Frontend Development Server**
 ```bash
-npm start
+npm run dev
 ```
 
-5. **Access the Application**
-- Web UI: http://localhost:3000
+6. **Access the Application**
+- Web UI: http://localhost:3000 (or check console for actual port)
 - API Documentation: http://localhost:8080/swagger-ui.html
 - Health Check: http://localhost:8080/actuator/health
+- Database Admin: http://localhost:8081 (Adminer, if enabled)
 
 ### Docker Deployment
 

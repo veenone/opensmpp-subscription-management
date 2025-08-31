@@ -407,12 +407,8 @@ public class ExternalSyncService {
         private int changesProcessed;
         private int successfulChanges;
         private int failedChanges;
-        private LocalDateTime processedAt;
-        
         @lombok.Builder.Default
-        private LocalDateTime processedAt() {
-            return LocalDateTime.now();
-        }
+        private LocalDateTime processedAt = LocalDateTime.now();
     }
 
     /**

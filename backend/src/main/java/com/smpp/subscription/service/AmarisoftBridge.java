@@ -31,18 +31,29 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class AmarisoftBridge {
 
-    @Qualifier("amarisoftRestTemplate")
     private final RestTemplate amarisoftRestTemplate;
-    
     private final SubscriptionRepository subscriptionRepository;
     private final SyncConfiguration syncConfiguration;
     private final AuditService auditService;
     private final ObjectMapper objectMapper;
     private final MeterRegistry meterRegistry;
+
+    public AmarisoftBridge(@Qualifier("amarisoftRestTemplate") RestTemplate amarisoftRestTemplate,
+                          SubscriptionRepository subscriptionRepository,
+                          SyncConfiguration syncConfiguration,
+                          AuditService auditService,
+                          ObjectMapper objectMapper,
+                          MeterRegistry meterRegistry) {
+        this.amarisoftRestTemplate = amarisoftRestTemplate;
+        this.subscriptionRepository = subscriptionRepository;
+        this.syncConfiguration = syncConfiguration;
+        this.auditService = auditService;
+        this.objectMapper = objectMapper;
+        this.meterRegistry = meterRegistry;
+    }
 
     // In-memory subscription cache for Amarisoft
     private final Map<String, AmarisoftSubscription> subscriptionCache = new ConcurrentHashMap<>();
@@ -546,12 +557,8 @@ public class AmarisoftBridge {
         private String msisdn;
         private String operation;
         private boolean statusChanged;
-        private LocalDateTime timestamp;
-        
         @lombok.Builder.Default
-        private LocalDateTime timestamp() {
-            return LocalDateTime.now();
-        }
+        private LocalDateTime timestamp = LocalDateTime.now();
     }
 
     @lombok.Data

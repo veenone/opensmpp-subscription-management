@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -162,8 +163,11 @@ public class SubscriptionController {
         
         log.info("Fetching subscription with ID: {}", id);
         
-        Subscription subscription = subscriptionService.getSubscriptionById(id);
-        SubscriptionResponseDto response = SubscriptionResponseDto.fromEntity(subscription);
+        Optional<Subscription> subscriptionOpt = subscriptionService.getSubscriptionById(id);
+        if (subscriptionOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        SubscriptionResponseDto response = SubscriptionResponseDto.fromEntity(subscriptionOpt.get());
         
         return ResponseEntity.ok(response);
     }
@@ -210,8 +214,11 @@ public class SubscriptionController {
         
         log.info("Fetching subscription with MSISDN: {}", msisdn);
         
-        Subscription subscription = subscriptionService.getSubscriptionByMsisdn(msisdn);
-        SubscriptionResponseDto response = SubscriptionResponseDto.fromEntity(subscription);
+        Optional<Subscription> subscriptionOpt = subscriptionService.getSubscriptionByMsisdn(msisdn);
+        if (subscriptionOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        SubscriptionResponseDto response = SubscriptionResponseDto.fromEntity(subscriptionOpt.get());
         
         return ResponseEntity.ok(response);
     }

@@ -1,6 +1,7 @@
 package com.smpp.subscription.service;
 
 import com.smpp.subscription.entity.AuditLog;
+import com.smpp.subscription.entity.Subscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -8,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Service for audit logging of subscription operations.
@@ -20,6 +22,17 @@ public class AuditService {
     /**
      * Log subscription creation event.
      */
+    public void logSubscriptionCreate(Subscription subscription, String user) {
+        logAuditEvent(
+            "SUBSCRIPTION_CREATED",
+            String.format("Subscription created with ID: %d, MSISDN: %s", subscription.getId(), subscription.getMsisdn()),
+            subscription.getId() != null ? subscription.getId().toString() : null
+        );
+    }
+
+    /**
+     * Log subscription creation event (legacy method).
+     */
     public void logSubscriptionCreated(Long subscriptionId, String msisdn) {
         logAuditEvent(
             "SUBSCRIPTION_CREATED",
@@ -30,6 +43,19 @@ public class AuditService {
 
     /**
      * Log subscription update event.
+     */
+    public void logSubscriptionUpdate(Subscription originalSubscription, Subscription updatedSubscription, String user) {
+        logAuditEvent(
+            "SUBSCRIPTION_UPDATED",
+            String.format("Subscription updated - ID: %d, MSISDN: %s, Status: %s -> %s", 
+                originalSubscription.getId(), originalSubscription.getMsisdn(), 
+                originalSubscription.getStatus(), updatedSubscription.getStatus()),
+            originalSubscription.getId().toString()
+        );
+    }
+
+    /**
+     * Log subscription update event (legacy method).
      */
     public void logSubscriptionUpdated(Long subscriptionId, String msisdn, String changes) {
         logAuditEvent(
@@ -43,6 +69,17 @@ public class AuditService {
     /**
      * Log subscription deletion event.
      */
+    public void logSubscriptionDelete(Subscription subscription, String user) {
+        logAuditEvent(
+            "SUBSCRIPTION_DELETED",
+            String.format("Subscription deleted - ID: %d, MSISDN: %s", subscription.getId(), subscription.getMsisdn()),
+            subscription.getId().toString()
+        );
+    }
+
+    /**
+     * Log subscription deletion event (legacy method).
+     */
     public void logSubscriptionDeleted(Long subscriptionId, String msisdn) {
         logAuditEvent(
             "SUBSCRIPTION_DELETED",
@@ -53,6 +90,17 @@ public class AuditService {
 
     /**
      * Log bulk import event.
+     */
+    public void logBulkImport(List<Subscription> subscriptions, String user) {
+        logAuditEvent(
+            "BULK_IMPORT",
+            String.format("Bulk import completed - Total subscriptions: %d", subscriptions.size()),
+            null
+        );
+    }
+
+    /**
+     * Log bulk import event (legacy method).
      */
     public void logBulkImport(int totalProcessed, int successful, int failed, int skipped) {
         logAuditEvent(
@@ -111,6 +159,30 @@ public class AuditService {
     }
 
     /**
+     * Log system events.
+     */
+    public void logSystemEvent(String event, String description) {
+        logAuditEvent(
+            event,
+            description,
+            null
+        );
+    }
+
+    /**
+     * Map string action to AuditAction enum.
+     */
+    private AuditLog.AuditAction getAuditAction(String actionString) {
+        try {
+            return AuditLog.AuditAction.valueOf(actionString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            // For system events that don't match predefined actions, default to CREATE
+            log.warn("Unknown audit action '{}', using CREATE as fallback", actionString);
+            return AuditLog.AuditAction.CREATE;
+        }
+    }
+
+    /**
      * Log general audit event.
      */
     private void logAuditEvent(String action, String description, String resourceId) {
@@ -118,10 +190,15 @@ public class AuditService {
         
         // Create audit log entry
         AuditLog auditLog = new AuditLog();
-        auditLog.setAction(action);
-        auditLog.setDescription(description);
-        auditLog.setResourceId(resourceId);
-        auditLog.setUserId(username);
+        auditLog.setEntityType("SYSTEM");
+        try {
+            auditLog.setEntityId(resourceId != null ? Long.parseLong(resourceId) : null);
+        } catch (NumberFormatException e) {
+            auditLog.setEntityId(null);
+        }
+        auditLog.setAction(getAuditAction(action));
+        auditLog.setChangeDetails(description);
+        auditLog.setUserName(username);
         auditLog.setTimestamp(LocalDateTime.now());
         auditLog.setIpAddress(getCurrentIpAddress());
         auditLog.setUserAgent(getCurrentUserAgent());

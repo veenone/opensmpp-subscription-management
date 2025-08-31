@@ -346,7 +346,7 @@ public class SyncScheduler implements HealthIndicator {
                 .lastFailureTime(lastFailureTime)
                 .lastErrorMessage(lastErrorMessage)
                 .currentlyRunning(isCurrentlyRunning)
-                .averageCycleDuration(syncCycleTimer.mean())
+                .averageCycleDuration(syncCycleTimer.mean(java.util.concurrent.TimeUnit.MILLISECONDS))
                 .build();
     }
 
