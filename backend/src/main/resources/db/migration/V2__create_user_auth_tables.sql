@@ -110,7 +110,8 @@ INSERT INTO roles (name, description, is_system_role) VALUES
     ('ROLE_USER', 'Standard user with basic access', true),
     ('ROLE_OPERATOR', 'Operations user with subscription management access', true),
     ('ROLE_VIEWER', 'Read-only access to system', true),
-    ('ROLE_API_USER', 'API access for external systems', true);
+    ('ROLE_API_USER', 'API access for external systems', true)
+ON CONFLICT (name) DO NOTHING;
 
 -- Insert default permissions
 INSERT INTO permissions (name, description, category) VALUES
@@ -144,7 +145,8 @@ INSERT INTO permissions (name, description, category) VALUES
     -- System permissions
     ('SYSTEM_CONFIGURE', 'Configure system settings', 'SYSTEM'),
     ('SYSTEM_MONITOR', 'Monitor system health', 'SYSTEM'),
-    ('SYSTEM_BACKUP', 'Perform system backups', 'SYSTEM');
+    ('SYSTEM_BACKUP', 'Perform system backups', 'SYSTEM')
+ON CONFLICT (name) DO NOTHING;
 
 -- Assign permissions to roles
 -- Admin gets all permissions
@@ -152,7 +154,8 @@ INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM roles r
 CROSS JOIN permissions p
-WHERE r.name = 'ROLE_ADMIN';
+WHERE r.name = 'ROLE_ADMIN'
+ON CONFLICT (role_id, permission_id) DO NOTHING;
 
 -- Operator gets subscription and sync permissions
 INSERT INTO role_permissions (role_id, permission_id)
@@ -160,7 +163,8 @@ SELECT r.id, p.id
 FROM roles r
 CROSS JOIN permissions p
 WHERE r.name = 'ROLE_OPERATOR'
-AND p.category IN ('SUBSCRIPTION', 'SYNC', 'CACHE');
+AND p.category IN ('SUBSCRIPTION', 'SYNC', 'CACHE')
+ON CONFLICT (role_id, permission_id) DO NOTHING;
 
 -- User gets basic read and update permissions
 INSERT INTO role_permissions (role_id, permission_id)
@@ -168,7 +172,8 @@ SELECT r.id, p.id
 FROM roles r
 CROSS JOIN permissions p
 WHERE r.name = 'ROLE_USER'
-AND p.name IN ('SUBSCRIPTION_READ', 'SUBSCRIPTION_UPDATE', 'USER_READ', 'USER_UPDATE');
+AND p.name IN ('SUBSCRIPTION_READ', 'SUBSCRIPTION_UPDATE', 'USER_READ', 'USER_UPDATE')
+ON CONFLICT (role_id, permission_id) DO NOTHING;
 
 -- Viewer gets all read permissions
 INSERT INTO role_permissions (role_id, permission_id)
@@ -176,7 +181,8 @@ SELECT r.id, p.id
 FROM roles r
 CROSS JOIN permissions p
 WHERE r.name = 'ROLE_VIEWER'
-AND p.name LIKE '%_READ' OR p.name LIKE '%_MONITOR';
+AND (p.name LIKE '%_READ' OR p.name LIKE '%_MONITOR')
+ON CONFLICT (role_id, permission_id) DO NOTHING;
 
 -- API User gets subscription and sync permissions
 INSERT INTO role_permissions (role_id, permission_id)
@@ -184,20 +190,23 @@ SELECT r.id, p.id
 FROM roles r
 CROSS JOIN permissions p
 WHERE r.name = 'ROLE_API_USER'
-AND p.category IN ('SUBSCRIPTION', 'SYNC');
+AND p.category IN ('SUBSCRIPTION', 'SYNC')
+ON CONFLICT (role_id, permission_id) DO NOTHING;
 
 -- Create default admin user (password: Admin@123! - should be changed on first login)
 -- Password is bcrypt hash of Admin@123!
 INSERT INTO users (username, email, password, first_name, last_name, is_active, password_changed_at, created_by)
 VALUES ('admin', 'admin@smpp-system.local', '$2a$10$VQdOZQPbVKPLv8xRmYpGPOvEq2BwRfBA6z9dhuaMA82mE9j6Kqn2O', 
-        'System', 'Administrator', true, CURRENT_TIMESTAMP, 'SYSTEM');
+        'System', 'Administrator', true, CURRENT_TIMESTAMP, 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;
 
 -- Assign admin role to admin user
 INSERT INTO user_roles (user_id, role_id, assigned_by)
 SELECT u.id, r.id, 'SYSTEM'
 FROM users u
 CROSS JOIN roles r
-WHERE u.username = 'admin' AND r.name = 'ROLE_ADMIN';
+WHERE u.username = 'admin' AND r.name = 'ROLE_ADMIN'
+ON CONFLICT (user_id, role_id) DO NOTHING;
 
 -- Create trigger to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
