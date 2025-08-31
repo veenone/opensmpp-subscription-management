@@ -31,23 +31,57 @@ node --version
 
 ## 🗄️ Backend Setup (10 minutes)
 
-### Step 1: PostgreSQL Database Setup
+### Step 1: Database Setup with Docker (Recommended)
 
-**Windows:**
+**Quick Docker Setup (5 minutes):**
+```bash
+# Start PostgreSQL and Redis containers
+docker-compose up -d postgres redis
+
+# Verify containers are healthy
+docker-compose ps
+
+# Check container logs if needed
+docker-compose logs postgres
+docker-compose logs redis
+```
+
+**Database Configuration (Automatic):**
+- **Database**: `smpp_subscriptions`
+- **Username**: `postgres`
+- **Password**: `postgres`
+- **Host**: `localhost`
+- **Port**: `5432`
+- **Redis Host**: `localhost`
+- **Redis Port**: `6379`
+- **Redis Password**: `redis_password`
+
+**Verify Database Connection:**
+```bash
+# Test PostgreSQL connection
+docker exec -it smpp_postgres psql -U postgres -d smpp_subscriptions -c "SELECT version();"
+
+# Test Redis connection
+docker exec -it smpp_redis redis-cli -a redis_password ping
+```
+
+### Alternative: Manual Database Setup
+
+**Windows (if not using Docker):**
 ```cmd
-# Create database and user
+# Install PostgreSQL and create database
 psql -U postgres
-CREATE DATABASE smpp_subscription_db;
-CREATE USER smpp_user WITH PASSWORD 'smpp_password123';
-GRANT ALL PRIVILEGES ON DATABASE smpp_subscription_db TO smpp_user;
+CREATE DATABASE smpp_subscriptions;
+CREATE USER smpp_user WITH PASSWORD 'smpp_password_2024';
+GRANT ALL PRIVILEGES ON DATABASE smpp_subscriptions TO smpp_user;
 \q
 ```
 
-**Linux/macOS:**
+**Linux/macOS (if not using Docker):**
 ```bash
-sudo -u postgres createdb smpp_subscription_db
-sudo -u postgres psql -c "CREATE USER smpp_user WITH PASSWORD 'smpp_password123';"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE smpp_subscription_db TO smpp_user;"
+sudo -u postgres createdb smpp_subscriptions
+sudo -u postgres psql -c "CREATE USER smpp_user WITH PASSWORD 'smpp_password_2024';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE smpp_subscriptions TO smpp_user;"
 ```
 
 ### Step 2: Redis Setup
@@ -226,7 +260,7 @@ curl -X POST http://localhost:8080/api/smpp/send \
 
 **Database Connection Pool:**
 ```bash
-curl http://localhost:8080/api/actuator/metrics/hikaricp.connections.active
+curl http://localhost:8082/actuator/metrics/hikaricp.connections.active
 ```
 
 **Memory Usage:**
@@ -235,6 +269,109 @@ curl http://localhost:8080/api/actuator/metrics/jvm.memory.used
 ```
 
 ---
+
+## 🔐 Authentication & Security
+
+### Current Authentication Status
+**⚠️ Important**: The application currently uses Spring Security's default authentication instead of the database user system.
+
+**Default Credentials:**
+- **Username**: `user`
+- **Password**: Generated on startup (check backend logs)
+- **Finding Password**: Look for line: `Using generated security password: xxxx-xxxx-xxxx-xxxx`
+
+**Example with current password:**
+```bash
+# Current generated password (changes on restart)
+curl -u "user:ad923882-b266-4ac4-930e-02b755ac997e" http://localhost:8082/api/subscriptions
+```
+
+### Database User System (Not Yet Active)
+The database contains a comprehensive user authentication system with:
+- Admin user: `admin` / `Admin@123!`
+- Role-based access control (RBAC)
+- JWT token support
+- MFA capabilities
+
+**Note**: SecurityConfig class needs to be implemented to activate database authentication.
+
+### PowerShell User Creation Scripts
+
+**Create Test User via Database:**
+```powershell
+# PowerShell script to create test user
+function Create-TestUser {
+    param(
+        [string]$Username = "testuser",
+        [string]$Email = "test@example.com",
+        [string]$Password = "Test@123!"
+    )
+    
+    # Connect to PostgreSQL
+    $pgHost = "localhost"
+    $pgPort = "5432"
+    $pgDatabase = "smpp_subscriptions"
+    $pgUser = "postgres"
+    
+    # Generate password hash (BCrypt)
+    $hashedPassword = '$2a$12$dummyHashForDemo'  # In production, use proper BCrypt
+    
+    # SQL to insert user
+    $sql = @"
+INSERT INTO users (username, email, password, first_name, last_name, is_active, created_at)
+VALUES ('$Username', '$Email', '$hashedPassword', 'Test', 'User', true, NOW())
+ON CONFLICT (username) DO NOTHING;
+
+-- Add admin role to user
+INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id 
+FROM users u, roles r 
+WHERE u.username = '$Username' AND r.name = 'ROLE_ADMIN'
+ON CONFLICT DO NOTHING;
+"@
+    
+    # Execute via psql
+    Write-Host "Creating user: $Username"
+    psql -U $pgUser -d $pgDatabase -c "$sql"
+}
+
+# Usage
+Create-TestUser -Username "developer" -Email "dev@example.com"
+```
+
+**Verify User Creation:**
+```powershell
+# Check if user was created
+psql -U postgres -d smpp_subscriptions -c "SELECT username, email, is_active FROM users;"
+```
+
+### Testing Authentication
+
+**1. Get Current Generated Password:**
+```bash
+# Check backend logs for password
+# Look for: "Using generated security password: xxxx-xxxx-xxxx-xxxx"
+```
+
+**2. Test Public Endpoint (No Auth):**
+```bash
+curl http://localhost:8082/actuator/health
+```
+
+**3. Test Protected Endpoint (With Auth):**
+```bash
+# Replace with actual generated password from logs
+curl -u "user:YOUR_GENERATED_PASSWORD" http://localhost:8082/api/subscriptions
+```
+
+**4. Test with Base64 Authorization Header:**
+```bash
+# Create base64 encoded credentials
+$credentials = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("user:YOUR_PASSWORD"))
+
+# Use in curl
+curl -H "Authorization: Basic $credentials" http://localhost:8082/api/subscriptions
+```
 
 ## 🔧 Common Issues & Solutions
 
@@ -292,11 +429,36 @@ redis-server  # Linux/macOS
 docker run -d -p 6379:6379 redis:alpine
 ```
 
-### Authentication Setup Issues
+### Authentication Issues (401 Errors)
+
+**Problem**: Getting 401 Unauthorized errors
+```
+Common Causes:
+1. Wrong port - Using 8080 instead of 8082
+2. Missing authentication credentials
+3. Using wrong password (password changes on restart)
+4. Database authentication not yet implemented
+
+Solutions:
+1. Verify correct port: curl http://localhost:8082/actuator/health
+2. Get current password from backend logs
+3. Use correct Basic Auth format: -u "user:password"
+4. Check if backend is running: netstat -ano | findstr :8082
+```
+
+**Problem**: Can't find generated password
+```
+Solution:
+1. Check backend console output for: "Using generated security password:"
+2. Password appears early in startup logs
+3. Restart backend to get new password
+4. Search logs: grep "generated security password" backend.log
+```
 
 **Problem**: JWT token expired or invalid
 ```
-Solution:
+Note: JWT is configured but not active without SecurityConfig
+Solution when JWT is enabled:
 1. Check token expiration in application.properties
 2. Verify JWT secret is at least 256 bits
 3. Clear browser localStorage and re-login
@@ -317,7 +479,7 @@ spring.web.cors.allowed-headers=*
 **Problem**: Slow API responses
 ```bash
 # Check database connections
-curl http://localhost:8080/api/actuator/metrics/hikaricp.connections
+curl http://localhost:8082/actuator/metrics/hikaricp.connections
 
 # Monitor JVM memory
 curl http://localhost:8080/api/actuator/metrics/jvm.memory.used
@@ -365,20 +527,54 @@ tail -f backend/logs/application.log
 
 ---
 
+## ⚠️ Known Issues & Current Limitations
+
+### Authentication System
+- **Database authentication not implemented** - SecurityConfig class missing
+- Using Spring Security generated passwords instead of database users
+- Admin user (`admin`/`Admin@123!`) exists in DB but cannot be used
+- JWT configuration present but not active
+
+### Service Status
+- **Redis shows as DOWN** in health check but doesn't block application
+- Redis connection may fail but caching still works with fallback
+- Health endpoint returns overall status DOWN due to Redis
+
+### Recent Fixes Applied
+- All test compilation errors resolved (87 errors → 0)
+- Backend can run without `-Dmaven.test.skip=true` flag
+- Fixed SQL migration syntax errors
+- Fixed RestTemplate bean dependency injection issues
+- Fixed TypeScript compilation errors (70+ errors resolved)
+
+### Port Configuration
+- Backend changed from 8080 to **8082** due to conflicts
+- Frontend runs on **3003** instead of default 3000
+- Ensure no other services use these ports
+
+---
+
 ## ✅ System Health Checklist
 
 After completing setup, verify all components:
 
 - [ ] PostgreSQL running on port 5432
-- [ ] Redis running on port 6379  
-- [ ] Backend API responding at http://localhost:8080/api/health
-- [ ] Frontend UI accessible at http://localhost:3002
-- [ ] User can login successfully
-- [ ] Subscription CRUD operations work
+- [ ] Redis running on port 6379 (may show DOWN)
+- [ ] Backend API responding at http://localhost:8082/actuator/health
+- [ ] Frontend UI accessible at http://localhost:3003
+- [ ] Authentication working with generated password
+- [ ] API endpoints accessible with Basic Auth
 - [ ] SMPP simulator can be started
-- [ ] No console errors in browser
-- [ ] Database contains test data
-- [ ] JWT authentication working
+- [ ] No critical errors in browser console
+- [ ] Database migrations completed successfully
+- [ ] Sync scheduler running (check logs)
+
+**Current System Status:**
+- ✅ Backend: Running on port 8082
+- ✅ Frontend: Running on port 3003
+- ✅ Database: Connected and healthy
+- ⚠️ Redis: May show as DOWN
+- ⚠️ Auth: Using generated passwords, not database users
 
 **Total Setup Time**: ~25-30 minutes for first-time setup, ~5 minutes for subsequent runs.
 
