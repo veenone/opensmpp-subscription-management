@@ -736,6 +736,14 @@ export const defaultThemeConfigs: Record<string, ThemeConfig> = {
   dark: {
     mode: 'dark',
   },
+  telecomLight: {
+    mode: 'light',
+    brandScheme: 'blue',
+  },
+  telecomDark: {
+    mode: 'dark',
+    brandScheme: 'blue',
+  },
   telecomBlue: {
     mode: 'light',
     brandScheme: 'blue',

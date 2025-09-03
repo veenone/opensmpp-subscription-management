@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogActions,
   Box,
-  Grid2 as Grid,
+  Grid,
   CardContent,
   Chip,
   List,
