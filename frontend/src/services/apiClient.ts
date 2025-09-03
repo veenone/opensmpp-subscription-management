@@ -1,14 +1,26 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 const REQUEST_TIMEOUT = 30000; // 30 seconds
+
+// Debug logging
+console.log('API Client Configuration:', {
+  API_BASE_URL,
+  env: import.meta.env,
+  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL
+});
 
 class ApiClient {
   private client: AxiosInstance;
 
   constructor() {
+    // Ensure base URL is valid - use proxy path to avoid CORS issues
+    const baseURL = API_BASE_URL || '/api';
+    
+    console.log('Creating axios instance with baseURL:', baseURL);
+    
     this.client = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: baseURL,
       timeout: REQUEST_TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
@@ -118,8 +130,25 @@ class ApiClient {
   }
 
   async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.post<T>(url, data, config);
-    return response.data;
+    console.log('API post called with:', {
+      url,
+      data,
+      baseURL: this.client.defaults.baseURL,
+      fullURL: `${this.client.defaults.baseURL}${url}`
+    });
+    
+    try {
+      const response = await this.client.post<T>(url, data, config);
+      return response.data;
+    } catch (error: any) {
+      console.error('Post request failed:', {
+        url,
+        baseURL: this.client.defaults.baseURL,
+        error: error.message,
+        stack: error.stack
+      });
+      throw error;
+    }
   }
 
   async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {

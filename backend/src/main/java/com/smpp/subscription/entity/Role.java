@@ -5,8 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -15,6 +17,7 @@ import java.util.Set;
 @Entity
 @Table(name = "roles")
 @Data
+@EqualsAndHashCode(exclude = {"users", "permissions"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,6 +36,7 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     @ToString.Exclude
+    @JsonIgnore
     @Builder.Default
     private Set<User> users = new HashSet<>();
 

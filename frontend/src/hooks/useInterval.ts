@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 // Hook for setInterval that handles cleanup and changing callbacks
 export const useInterval = (callback: () => void, delay: number | null) => {
-  const savedCallback = useRef<() => void>();
+  const savedCallback = useRef<() => void>(callback);
 
   // Remember the latest callback
   useEffect(() => {

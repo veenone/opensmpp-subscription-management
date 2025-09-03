@@ -787,7 +787,7 @@ export const DesignSystemShowcase: React.FC = () => {
             description="Common UI patterns for SMPP and telecommunications applications"
           >
             <Grid container spacing={3}>
-              <Grid size={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Card>
                   <CardContent>
                     <Typography variant="titleMedium" gutterBottom>
@@ -811,7 +811,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 </Card>
               </Grid>
               
-              <Grid size={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Card>
                   <CardContent>
                     <Typography variant="titleMedium" gutterBottom>
@@ -836,7 +836,7 @@ export const DesignSystemShowcase: React.FC = () => {
                 </Card>
               </Grid>
               
-              <Grid size={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Card>
                   <CardContent>
                     <Typography variant="titleMedium" gutterBottom>

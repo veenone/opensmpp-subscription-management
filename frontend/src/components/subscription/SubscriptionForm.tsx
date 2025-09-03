@@ -4,7 +4,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Box,
   TextField,
   FormControl,
   InputLabel,
@@ -12,7 +11,6 @@ import {
   MenuItem,
   FormHelperText,
   Alert,
-  Grid,
   Divider,
   Chip,
   InputAdornment,
@@ -21,8 +19,8 @@ import {
   CardContent,
   Switch,
   FormControlLabel,
-  useTheme,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import {
   Close as CloseIcon,
   Save as SaveIcon,
@@ -40,19 +38,17 @@ import { useAuth } from '../../contexts/AuthContext';
 import { 
   TitleLarge, 
   HeadlineMedium,
-  BodyLarge, 
-  MonospaceText 
+ 
 } from '../../theme/typography';
 import { 
   AccessibleButton,
   AccessibleFormControl,
-  HighContrastContainer 
+ 
 } from '../../theme/accessibility';
 import { 
   ResponsiveFlex,
   useBreakpoint 
 } from '../../theme/responsive';
-import { FloatingCard } from '../../theme/elevation';
 
 interface SubscriptionFormProps {
   open: boolean;
@@ -94,7 +90,6 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
   subscription,
   mode,
 }) => {
-  const theme = useTheme();
   const { hasPermission } = useAuth();
   const breakpoint = useBreakpoint();
 
@@ -302,7 +297,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
     >
       <form onSubmit={handleSubmit}>
         <DialogTitle>
-          <ResponsiveFlex justify="space-between" align="center">
+          <ResponsiveFlex sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
             <TitleLarge>
               {mode === 'create' ? 'Add New Subscription' : 'Edit Subscription'}
             </TitleLarge>
@@ -332,7 +327,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </HeadlineMedium>
             </Grid>
 
-            <Grid size={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <AccessibleFormControl>
                 <TextField
                   label="MSISDN *"
@@ -353,7 +348,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </AccessibleFormControl>
             </Grid>
 
-            <Grid size={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <AccessibleFormControl>
                 <FormControl fullWidth error={!!errors.status}>
                   <InputLabel>Status *</InputLabel>
@@ -399,7 +394,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
             </Grid>
 
             {/* Optional Fields */}
-            <Grid size={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <AccessibleFormControl>
                 <TextField
                   label="Display Name"
@@ -417,7 +412,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
               </AccessibleFormControl>
             </Grid>
 
-            <Grid size={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <AccessibleFormControl>
                 <TextField
                   label="Email"
@@ -449,7 +444,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                 <Card variant="outlined">
                   <CardContent>
                     <Grid container spacing={2}>
-                      <Grid size={12} sm={6}>
+                      <Grid size={{ xs: 12, sm: 6 }}>
                         <AccessibleFormControl>
                           <TextField
                             label="Max Sessions"
@@ -464,7 +459,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
                         </AccessibleFormControl>
                       </Grid>
 
-                      <Grid size={12} sm={6}>
+                      <Grid size={{ xs: 12, sm: 6 }}>
                         <AccessibleFormControl>
                           <TextField
                             label="Service Profile"
@@ -630,4 +625,4 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
   );
 };
 
-export default SubscriptionForm;
+export { SubscriptionForm };

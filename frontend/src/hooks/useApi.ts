@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { toast } from '../components/common/Toaster';
 
-export interface UseApiState<T = any> {
+export interface UseApiState<T = unknown> {
   data: T | null;
   loading: boolean;
   error: string | null;
@@ -16,7 +16,7 @@ export interface UseApiOptions {
   onError?: (error: any) => void;
 }
 
-export const useApi = <T = any>(options: UseApiOptions = {}) => {
+export const useApi = <T = unknown>(options: UseApiOptions = {}) => {
   const {
     showSuccessToast = false,
     showErrorToast = true,
@@ -148,7 +148,7 @@ export const useAsyncOperation = (options: UseApiOptions = {}) => {
 };
 
 // Hook for paginated data
-export const usePaginatedApi = <T = any>(initialPageSize = 20) => {
+export const usePaginatedApi = <T = unknown>(initialPageSize = 20) => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [totalElements, setTotalElements] = useState(0);
@@ -158,10 +158,10 @@ export const usePaginatedApi = <T = any>(initialPageSize = 20) => {
   const apiState = useApi<T[]>();
 
   const loadPage = useCallback(async (
-    apiCall: (page: number, size: number, sortBy: string, sortDir: string) => Promise<any>
+    apiCall: (page: number, size: number, sortBy: string, sortDir: string) => Promise<{ content: T[]; totalElements: number }>
   ) => {
     const result = await apiState.execute(() => apiCall(page, pageSize, sortBy, sortDirection));
-    if (result?.totalElements !== undefined) {
+    if (result && 'totalElements' in result) {
       setTotalElements(result.totalElements);
     }
     return result;

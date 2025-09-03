@@ -14,6 +14,8 @@
 - Redis 6+
 - Git
 
+> **⚠️ Important**: This guide uses the correct Maven syntax. Always run backend commands from the **root directory** using `.\mvnw.cmd -pl backend spring-boot:run` (Windows) or `./mvnw -pl backend spring-boot:run` (Linux/Mac). Running from the backend directory requires `../mvnw.cmd` or `../mvnw`.
+
 ### Clone and Basic Setup
 ```bash
 # Clone the repository
@@ -127,25 +129,58 @@ logging.level.org.springframework.security=DEBUG
 
 ### Step 4: Start Backend
 
+**Option 1: From Root Directory (Recommended):**
+
+**Windows:**
+```cmd
+# Basic startup
+.\mvnw.cmd -pl backend spring-boot:run
+
+# With development profile
+.\mvnw.cmd -pl backend spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Custom port if 8080 is in use
+$env:SERVER_PORT="8081"; .\mvnw.cmd -pl backend spring-boot:run
+```
+
+**Linux/macOS:**
+```bash
+# Basic startup
+./mvnw -pl backend spring-boot:run
+
+# With development profile  
+./mvnw -pl backend spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Custom port if 8080 is in use
+SERVER_PORT=8081 ./mvnw -pl backend spring-boot:run
+```
+
+**Option 2: From Backend Directory:**
+
 **Windows:**
 ```cmd
 cd backend
-.\mvnw.cmd clean spring-boot:run -Dspring-boot.run.profiles=dev
+..\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 **Linux/macOS:**
 ```bash
 cd backend
-./mvnw clean spring-boot:run -Dspring-boot.run.profiles=dev
+../mvnw spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 ### Step 5: Verify Backend Health
 ```bash
-# Check if backend is running
+# Check if backend is running (default port 8080)
 curl http://localhost:8080/api/health
+
+# If using custom port 8081
+curl http://localhost:8081/actuator/health
 
 # Expected response: {"status":"UP","timestamp":"..."}
 ```
+
+> **Troubleshooting**: If you get "port already in use" error, the backend will automatically try port 8081. Check the console output for the actual port being used.
 
 ---
 
@@ -240,8 +275,12 @@ curl -X GET http://localhost:8080/api/subscriptions \
 
 **Start SMPP Simulator:**
 ```bash
+# From root directory (Recommended)
+.\mvnw.cmd -pl smpp-core spring-boot:run -Dspring-boot.run.profiles=simulator
+
+# Or from smpp-core directory
 cd smpp-core
-mvn spring-boot:run -Dspring-boot.run.profiles=simulator
+..\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=simulator
 ```
 
 **Test SMPP Connection:**
@@ -273,27 +312,42 @@ curl http://localhost:8080/api/actuator/metrics/jvm.memory.used
 ## 🔐 Authentication & Security
 
 ### Current Authentication Status
-**⚠️ Important**: The application currently uses Spring Security's default authentication instead of the database user system.
+**✅ Important**: The application now uses database-based authentication with JWT tokens.
 
 **Default Credentials:**
-- **Username**: `user`
-- **Password**: Generated on startup (check backend logs)
-- **Finding Password**: Look for line: `Using generated security password: xxxx-xxxx-xxxx-xxxx`
+- **Username**: `admin`
+- **Password**: `password`
+- **Authentication**: Database users with role-based access control (RBAC)
 
-**Example with current password:**
+**Login Process:**
 ```bash
-# Current generated password (changes on restart)
-curl -u "user:ad923882-b266-4ac4-930e-02b755ac997e" http://localhost:8082/api/subscriptions
+# Login to get JWT token
+curl -X POST http://localhost:8082/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "password"
+  }'
+
+# Use JWT token for API calls
+curl -X GET http://localhost:8082/api/subscriptions \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-### Database User System (Not Yet Active)
+### Database User System (Active)
 The database contains a comprehensive user authentication system with:
-- Admin user: `admin` / `Admin@123!`
+- Admin user: `admin` / `password`
 - Role-based access control (RBAC)
-- JWT token support
-- MFA capabilities
+- JWT token support (active)
+- Permission-based authorization
+- BCrypt password encryption
 
-**Note**: SecurityConfig class needs to be implemented to activate database authentication.
+**Features:**
+- Secure password hashing with BCrypt
+- JWT tokens with 1-hour expiration
+- Refresh token support (7-day expiration)
+- Role and permission-based access control
+- User profile management
 
 ### PowerShell User Creation Scripts
 
@@ -435,43 +489,50 @@ docker run -d -p 6379:6379 redis:alpine
 ```
 Common Causes:
 1. Wrong port - Using 8080 instead of 8082
-2. Missing authentication credentials
-3. Using wrong password (password changes on restart)
-4. Database authentication not yet implemented
+2. Missing or expired JWT token
+3. Using wrong credentials (admin/password)
+4. CORS issues preventing authentication
 
 Solutions:
 1. Verify correct port: curl http://localhost:8082/actuator/health
-2. Get current password from backend logs
-3. Use correct Basic Auth format: -u "user:password"
+2. Login to get fresh JWT token: POST /api/auth/login
+3. Use JWT token in Authorization header: "Bearer YOUR_TOKEN"
 4. Check if backend is running: netstat -ano | findstr :8082
+5. Verify CORS configuration for your frontend port
 ```
 
-**Problem**: Can't find generated password
+**Problem**: Database authentication failing
 ```
 Solution:
-1. Check backend console output for: "Using generated security password:"
-2. Password appears early in startup logs
-3. Restart backend to get new password
-4. Search logs: grep "generated security password" backend.log
+1. Use admin/password credentials for login
+2. If admin password corrupted, use fix endpoint:
+   POST http://localhost:8082/api/auth/admin/fix-admin-password
+3. Check database migrations completed successfully
+4. Verify BCrypt password hashing is working
+5. Check logs for password validation debug messages
 ```
 
 **Problem**: JWT token expired or invalid
 ```
-Note: JWT is configured but not active without SecurityConfig
-Solution when JWT is enabled:
-1. Check token expiration in application.properties
-2. Verify JWT secret is at least 256 bits
-3. Clear browser localStorage and re-login
-4. Check server logs for authentication errors
+Solution:
+1. Check token expiration (default: 1 hour)
+2. Use refresh token endpoint: POST /api/auth/refresh
+3. Re-login if refresh token expired (7 days)
+4. Verify JWT secret in application.properties
+5. Clear browser localStorage and re-login
+6. Check server logs for authentication errors
 ```
 
 **Problem**: CORS errors in browser
 ```
 Solution:
-Add to backend application.properties:
-spring.web.cors.allowed-origins=http://localhost:3002
-spring.web.cors.allowed-methods=GET,POST,PUT,DELETE,OPTIONS
-spring.web.cors.allowed-headers=*
+CORS is configured in SecurityConfig.java for multiple ports:
+- http://localhost:3000 (default frontend port)
+- http://localhost:3001 (Vite fallback port)
+- http://localhost:3003 (configured port)
+
+If using different port, update SecurityConfig.java:
+.setAllowedOrigins(Arrays.asList("http://localhost:YOUR_PORT"))
 ```
 
 ### Performance Issues
@@ -498,6 +559,77 @@ npm install
 # Check Node.js version compatibility
 node --version  # Should be 18+
 ```
+
+### Recent Authentication & CORS Fixes
+
+**CORS Configuration Issues:**
+If frontend running on different ports encounters CORS errors:
+
+1. **Check current frontend port:**
+   ```bash
+   # Vite typically uses port 3000, but may use 3001 if 3000 is occupied
+   # Check terminal output: "Local: http://localhost:3001/"
+   ```
+
+2. **Update backend CORS configuration:**
+   ```java
+   // In SecurityConfig.java
+   configuration.setAllowedOrigins(Arrays.asList(
+       "http://localhost:3000", 
+       "http://localhost:3001",  // Add your frontend port here
+       "http://localhost:3003"
+   ));
+   ```
+
+3. **Update AuthController CORS annotation:**
+   ```java
+   // In AuthController.java
+   @CrossOrigin(origins = {
+       "http://localhost:3000", 
+       "http://localhost:3001",  // Add your frontend port here
+       "http://localhost:3003"
+   })
+   ```
+
+4. **Restart backend after CORS changes:**
+   Backend must be restarted to pick up new CORS configuration.
+
+**Authentication Database Issues:**
+If admin login fails with "Invalid credentials":
+
+1. **Fix admin password using endpoint:**
+   ```bash
+   curl -X POST http://localhost:8082/api/auth/admin/fix-admin-password
+   # This regenerates proper BCrypt hash for "password"
+   ```
+
+2. **Verify database migrations:**
+   ```bash
+   # Check migration status
+   docker exec -it smpp_postgres psql -U postgres -d smpp_subscriptions \
+     -c "SELECT version, description, success FROM flyway_schema_history ORDER BY installed_rank;"
+   ```
+
+3. **Check admin user status:**
+   ```bash
+   # Verify admin user exists and is active
+   docker exec -it smpp_postgres psql -U postgres -d smpp_subscriptions \
+     -c "SELECT username, password, is_active, created_at FROM users WHERE username = 'admin';"
+   ```
+
+4. **Debug authentication flow:**
+   Enable debug logging to see authentication process:
+   ```properties
+   # In application-dev.properties
+   logging.level.com.smpp.subscription.service.AuthService=DEBUG
+   ```
+
+**Permission-Related Frontend Errors:**
+If frontend shows "Cannot read properties of undefined (reading 'includes')":
+
+1. **Issue**: Frontend expects `user.permissions[]` but backend returns `user.roles[].permissions[]`
+2. **Fix**: Already implemented in AuthService.ts with `getUserPermissions()` helper
+3. **Verify**: Check browser console for permission extraction errors
 
 ### Development Tips
 
@@ -530,10 +662,12 @@ tail -f backend/logs/application.log
 ## ⚠️ Known Issues & Current Limitations
 
 ### Authentication System
-- **Database authentication not implemented** - SecurityConfig class missing
-- Using Spring Security generated passwords instead of database users
-- Admin user (`admin`/`Admin@123!`) exists in DB but cannot be used
-- JWT configuration present but not active
+- **Database authentication fully implemented** ✅
+- JWT token-based authentication active
+- Admin user (`admin`/`password`) working with proper BCrypt hashing
+- Role-based access control (RBAC) implemented
+- CORS configured for multiple frontend ports (3000, 3001, 3003)
+- Authentication endpoints: /api/auth/login, /api/auth/refresh, /api/auth/me
 
 ### Service Status
 - **Redis shows as DOWN** in health check but doesn't block application
@@ -562,8 +696,9 @@ After completing setup, verify all components:
 - [ ] Redis running on port 6379 (may show DOWN)
 - [ ] Backend API responding at http://localhost:8082/actuator/health
 - [ ] Frontend UI accessible at http://localhost:3003
-- [ ] Authentication working with generated password
-- [ ] API endpoints accessible with Basic Auth
+- [ ] Authentication working with admin/password credentials
+- [ ] JWT token received from login endpoint
+- [ ] API endpoints accessible with JWT Bearer token
 - [ ] SMPP simulator can be started
 - [ ] No critical errors in browser console
 - [ ] Database migrations completed successfully
@@ -574,7 +709,7 @@ After completing setup, verify all components:
 - ✅ Frontend: Running on port 3003
 - ✅ Database: Connected and healthy
 - ⚠️ Redis: May show as DOWN
-- ⚠️ Auth: Using generated passwords, not database users
+- ✅ Auth: Database authentication with JWT tokens active
 
 **Total Setup Time**: ~25-30 minutes for first-time setup, ~5 minutes for subsequent runs.
 

@@ -5,7 +5,6 @@
 
 import { styled, useTheme } from '@mui/material/styles';
 import { useMediaQuery, Grid, Container, Box } from '@mui/material';
-import { breakpointTokens } from './tokens';
 
 // Breakpoint system based on Material Design 3
 export const breakpoints = {
@@ -81,7 +80,6 @@ export const responsiveUtils = {
     const minSize = responsiveUtils.pxToRem(minFontSize);
     const maxSize = responsiveUtils.pxToRem(maxFontSize);
     const minVw = responsiveUtils.pxToRem(minViewportWidth);
-    const maxVw = responsiveUtils.pxToRem(maxViewportWidth);
     
     return `clamp(${minSize}, ${minSize} + (${maxFontSize - minFontSize}) * ((100vw - ${minVw}) / (${maxViewportWidth - minViewportWidth})), ${maxSize})`;
   },

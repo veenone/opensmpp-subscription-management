@@ -81,8 +81,32 @@ docker exec -it smpp_redis redis-cli -a redis_password ping
 ```
 
 3. **Run Backend Application**
+
+**Option 1: From Root Directory (Recommended)**
 ```bash
-./mvnw spring-boot:run
+# Windows
+.\mvnw.cmd -pl backend spring-boot:run
+
+# Linux/Mac
+./mvnw -pl backend spring-boot:run
+```
+
+**Option 2: From Backend Directory**
+```bash
+cd backend
+# Windows
+..\mvnw.cmd spring-boot:run
+# Linux/Mac
+../mvnw spring-boot:run
+```
+
+**Option 3: Custom Port (if 8080 is in use)**
+```bash
+# Windows - Set environment variable and run
+$env:SERVER_PORT="8081"; .\mvnw.cmd -pl backend spring-boot:run
+
+# Linux/Mac - Set environment variable and run  
+SERVER_PORT=8081 ./mvnw -pl backend spring-boot:run
 ```
 
 4. **Install Frontend Dependencies**
@@ -98,9 +122,11 @@ npm run dev
 
 6. **Access the Application**
 - Web UI: http://localhost:3000 (or check console for actual port)
-- API Documentation: http://localhost:8080/swagger-ui.html
-- Health Check: http://localhost:8080/actuator/health
+- API Documentation: http://localhost:8080/swagger-ui.html (or 8081 if port changed)
+- Health Check: http://localhost:8080/actuator/health (or 8081 if port changed)
 - Database Admin: http://localhost:8081 (Adminer, if enabled)
+
+> **Note**: If port 8080 is already in use, the backend will automatically use port 8081. Check the console output for the actual port.
 
 ### Docker Deployment
 
@@ -158,11 +184,27 @@ smpp-subscription-management/
 
 ### Backend
 ```bash
-# Windows users can use mvnw.cmd instead of ./mvnw
-./mvnw clean compile          # Compile Java sources
-./mvnw test                   # Run unit tests
-./mvnw integration-test       # Run integration tests
-./mvnw spring-boot:run        # Run application
+# Compile and run from root directory (Recommended)
+# Windows
+.\mvnw.cmd clean compile          # Compile Java sources
+.\mvnw.cmd test                   # Run unit tests  
+.\mvnw.cmd integration-test       # Run integration tests
+.\mvnw.cmd -pl backend spring-boot:run        # Run backend application
+
+# Linux/Mac
+./mvnw clean compile             # Compile Java sources
+./mvnw test                      # Run unit tests
+./mvnw integration-test          # Run integration tests
+./mvnw -pl backend spring-boot:run           # Run backend application
+
+# Alternative: From backend directory
+cd backend
+# Windows: ..\mvnw.cmd spring-boot:run
+# Linux/Mac: ../mvnw spring-boot:run
+
+# Custom port (if 8080 is in use)
+# Windows: $env:SERVER_PORT="8081"; .\mvnw.cmd -pl backend spring-boot:run
+# Linux/Mac: SERVER_PORT=8081 ./mvnw -pl backend spring-boot:run
 ```
 
 ### Frontend (Vite)

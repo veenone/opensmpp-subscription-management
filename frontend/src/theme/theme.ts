@@ -420,7 +420,7 @@ function createMD3Components(colorScheme: ColorScheme, mode: PaletteMode) {
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
+          textTransform: 'none' as const,
           fontWeight: 500,
           borderRadius: shapeTokens.corner.large,
           padding: '10px 24px',
@@ -619,7 +619,7 @@ function createMD3Components(colorScheme: ColorScheme, mode: PaletteMode) {
     MuiTab: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
+          textTransform: 'none' as const,
           fontWeight: 500,
           minHeight: '48px',
           borderRadius: `${shapeTokens.corner.large} ${shapeTokens.corner.large} 0 0`,
@@ -753,3 +753,6 @@ export const defaultThemeConfigs: Record<string, ThemeConfig> = {
     },
   },
 };
+
+// Create default theme for immediate use
+export const theme = createMD3Theme(defaultThemeConfigs.telecomLight);

@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import {
   Box,
-  Container,
   Alert,
   Snackbar,
   Dialog,
@@ -15,17 +14,15 @@ import {
 import { Subscription } from '../types/subscription';
 import { useAuth } from '../contexts/AuthContext';
 import SubscriptionList from '../components/subscription/SubscriptionList';
-import SubscriptionForm from '../components/subscription/SubscriptionForm';
+import { SubscriptionForm } from '../components/subscription/SubscriptionForm';
 import SubscriptionDetails from '../components/subscription/SubscriptionDetails';
 import SubscriptionFilters, { FilterOptions } from '../components/subscription/SubscriptionFilters';
 import { apiClient } from '../services/apiClient';
 import { 
-  TitleLarge,
   HeadlineMedium
 } from '../theme/typography';
 import { 
-  AccessibleButton,
-  HighContrastContainer 
+  AccessibleButton
 } from '../theme/accessibility';
 import { 
   ResponsiveFlex,
@@ -40,9 +37,7 @@ interface SnackbarMessage {
 }
 
 const SubscriptionManagement: React.FC = () => {
-  const theme = useTheme();
   const { hasPermission } = useAuth();
-  const breakpoint = useBreakpoint();
 
   // State management
   const [filters, setFilters] = useState<FilterOptions>({
@@ -203,9 +198,9 @@ const SubscriptionManagement: React.FC = () => {
           
           {/* Statistics Cards */}
           <ResponsiveFlex 
-            gap={2} 
+            gap={{ xs: 2, sm: 2 }} 
             sx={{ mt: 3 }}
-            wrap="wrap"
+            wrap={{ xs: 'wrap', sm: 'wrap' }}
             justify={{ xs: 'center', sm: 'flex-start' }}
           >
             <FloatingCard floating sx={{ minWidth: '120px', textAlign: 'center' }}>
@@ -345,16 +340,14 @@ const SubscriptionManagement: React.FC = () => {
           onClose={handleCloseSnackbar}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
-          {snackbar && (
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity={snackbar.severity}
-              variant="filled"
-              sx={{ width: '100%' }}
-            >
-              {snackbar.message}
-            </Alert>
-          )}
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbar?.severity || 'info'}
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {snackbar?.message || ''}
+          </Alert>
         </Snackbar>
       </Box>
     </ResponsiveContainer>

@@ -4,7 +4,7 @@ export const APP_VERSION = '1.0.0';
 export const APP_DESCRIPTION = 'Comprehensive SMPP subscription management with real-time monitoring';
 
 // API Configuration
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8082/api';
 export const REQUEST_TIMEOUT = 30000; // 30 seconds
 export const MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10MB
 

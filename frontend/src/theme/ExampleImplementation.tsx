@@ -113,7 +113,7 @@ const ExampleImplementation: React.FC = () => {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [notifications, setNotifications] = useState(3);
+  const [notifications] = useState(3);
 
   // Mock data
   const [metrics] = useState<NetworkMetrics>({
@@ -182,7 +182,7 @@ const ExampleImplementation: React.FC = () => {
       case 'error':
         return 'error' as const;
       default:
-        return 'neutral' as const;
+        return 'offline' as const;
     }
   };
 
@@ -279,9 +279,11 @@ const ExampleImplementation: React.FC = () => {
           <HeadlineMedium gutterBottom>Network Metrics</HeadlineMedium>
           
           <ResponsiveFlex
-            direction={{ xs: 'column', sm: 'row' }}
             gap={2}
-            wrap="wrap"
+            sx={{
+              flexDirection: { xs: 'column', sm: 'row' },
+              flexWrap: 'wrap'
+            }}
           >
             <FloatingCard floating hoverFloat sx={{ flex: 1, minWidth: '250px' }}>
               <CardContent sx={{ textAlign: 'center' }}>
@@ -372,9 +374,11 @@ const ExampleImplementation: React.FC = () => {
                             <ListItemText
                               primary={
                                 <ResponsiveFlex
-                                  direction={{ xs: 'column', sm: 'row' }}
-                                  justify="space-between"
-                                  align={{ xs: 'flex-start', sm: 'center' }}
+                                  sx={{
+                                    flexDirection: { xs: 'column', sm: 'row' },
+                                    justifyContent: 'space-between',
+                                    alignItems: { xs: 'flex-start', sm: 'center' }
+                                  }}
                                   gap={1}
                                 >
                                   <Box>

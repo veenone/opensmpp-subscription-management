@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
         @UniqueConstraint(columnNames = "email")
     })
 @Data
+@EqualsAndHashCode(exclude = {"roles"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

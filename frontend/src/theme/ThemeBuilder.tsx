@@ -36,16 +36,13 @@ import { useTheme, ThemeProvider } from '@mui/material/styles';
 import {
   createMD3Theme,
   ThemeConfig,
-  defaultThemeConfigs,
 } from './theme';
 import {
   brandColorSchemes,
-  generateCustomColorScheme,
   getContrastRatio,
-  isAccessible,
 } from './colorSystem';
 import { ContrastIndicator } from './accessibility';
-import { ResponsiveContainer, useBreakpoint } from './responsive';
+import { ResponsiveContainer } from './responsive';
 
 // Color input component with validation
 const ColorInput: React.FC<{

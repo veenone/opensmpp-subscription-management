@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/sync")
+@RequestMapping("/api/sync")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Synchronization", description = "External synchronization management endpoints")

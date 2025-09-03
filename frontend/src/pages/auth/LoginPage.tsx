@@ -24,6 +24,8 @@ import { FormSelect } from '../../components/forms/FormSelect';
 import { useAuth } from '../../contexts/AuthContext';
 import { LoginRequest } from '../../services/authService';
 import { useTheme } from '../../contexts/ThemeContext';
+import JwtTest from '../../components/JwtTest';
+import { AuthDebugTest } from '../../components/AuthDebugTest';
 
 interface LoginFormData extends LoginRequest {
   rememberMe: boolean;
@@ -274,6 +276,20 @@ export default function LoginPage() {
             <Typography variant="caption" color="text.secondary">
               Development Mode - Default credentials: admin/admin123
             </Typography>
+          </Box>
+        )}
+
+        {/* JWT Test Component (Development Only) */}
+        {import.meta.env.DEV && (
+          <Box sx={{ mt: 2 }}>
+            <JwtTest />
+          </Box>
+        )}
+
+        {/* Auth Debug Test Component (Development Only) */}
+        {import.meta.env.DEV && (
+          <Box sx={{ mt: 2 }}>
+            <AuthDebugTest />
           </Box>
         )}
       </Container>

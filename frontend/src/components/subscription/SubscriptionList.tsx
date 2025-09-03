@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
-  Card,
-  CardContent,
   Table,
   TableBody,
   TableCell,
@@ -11,7 +9,6 @@ import {
   TableRow,
   TableSortLabel,
   TablePagination,
-  Chip,
   IconButton,
   Tooltip,
   Alert,
@@ -44,8 +41,7 @@ import {
   DataText 
 } from '../../theme/typography';
 import { 
-  AccessibleButton,
-  HighContrastContainer 
+  AccessibleButton
 } from '../../theme/accessibility';
 import { 
   ResponsiveFlex,
@@ -78,7 +74,7 @@ const SubscriptionList: React.FC<SubscriptionListProps> = ({
   refreshTrigger = 0,
 }) => {
   const theme = useTheme();
-  const { user, hasPermission } = useAuth();
+  const { hasPermission } = useAuth();
   const breakpoint = useBreakpoint();
 
   // State management
@@ -109,7 +105,7 @@ const SubscriptionList: React.FC<SubscriptionListProps> = ({
         ...(statusFilter !== 'all' && { status: statusFilter }),
       });
 
-      const response = await apiClient.get(`/api/subscriptions?${params}`);
+      const response = await apiClient.get<{ content: Subscription[]; totalElements: number }>(`/api/subscriptions?${params}`);
       setSubscriptions(response.data.content || []);
     } catch (err) {
       setError('Failed to load subscriptions. Please try again.');
@@ -132,7 +128,7 @@ const SubscriptionList: React.FC<SubscriptionListProps> = ({
     setPage(0);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -176,11 +172,12 @@ const SubscriptionList: React.FC<SubscriptionListProps> = ({
       case 'EXPIRED':
         return 'error' as const;
       default:
-        return 'neutral' as const;
+        return 'offline' as const;
     }
   };
 
-  const formatLastActivity = (date: string) => {
+  const formatLastActivity = (date?: string) => {
+    if (!date) return 'Unknown';
     try {
       const activityDate = new Date(date);
       const now = new Date();
@@ -217,17 +214,17 @@ const SubscriptionList: React.FC<SubscriptionListProps> = ({
     <Box>
       {/* Header */}
       <ResponsiveFlex
-        justify="space-between"
-        align="center"
+        justify={{ xs: 'space-between', sm: 'space-between' }}
+        align={{ xs: 'center', sm: 'center' }}
         sx={{ mb: 3 }}
         direction={{ xs: 'column', sm: 'row' }}
-        gap={2}
+        gap={{ xs: 2, sm: 2 }}
       >
         <TitleLarge>
           Subscription Management
         </TitleLarge>
         
-        <ResponsiveFlex gap={1}>
+        <ResponsiveFlex gap={{ xs: 1, sm: 1 }}>
           <Tooltip title="Refresh Data">
             <IconButton 
               onClick={fetchSubscriptions} 
@@ -366,7 +363,7 @@ const SubscriptionList: React.FC<SubscriptionListProps> = ({
                     <HideOn xs sm>
                       <TableCell>
                         <DataText>
-                          {formatLastActivity(subscription.lastActivity)}
+                          {formatLastActivity(subscription.lastActivity || subscription.updatedAt)}
                         </DataText>
                       </TableCell>
                     </HideOn>

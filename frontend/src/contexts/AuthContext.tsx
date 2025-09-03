@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authApi, AuthResponse, LoginRequest, User } from '../services/authService';
 import { toast } from '../components/common/Toaster';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthContextType {
   user: User | null;
@@ -13,7 +14,7 @@ interface AuthContextType {
   hasPermission: (permission: string) => boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -69,10 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const hasPermission = (permission: string): boolean => {
-    if (!user || !user.roles) return false;
-    return user.roles.some((role: any) => 
-      role.permissions?.some((perm: any) => perm.name === permission)
-    );
+    return authApi.hasPermission(user, permission);
   };
 
   const refreshToken = async () => {
@@ -143,7 +141,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (!token) return;
 
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
+      const payload = jwtDecode(token) as any;
       const exp = payload.exp * 1000; // Convert to milliseconds
       const now = Date.now();
       

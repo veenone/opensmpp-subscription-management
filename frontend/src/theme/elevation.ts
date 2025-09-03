@@ -4,8 +4,8 @@
  */
 
 import { styled, keyframes } from '@mui/material/styles';
-import { Box, Paper, Card } from '@mui/material';
-import { elevationTokens, motionTokens } from './tokens';
+import { Box, Card } from '@mui/material';
+import { motionTokens } from './tokens';
 
 // Elevation levels with Material Design 3 specifications
 export const elevationLevels = {
@@ -79,20 +79,12 @@ export const elevationUtils = {
 };
 
 // Animated elevation components
-const elevationAnimation = keyframes`
-  0% {
-    box-shadow: none;
-  }
-  100% {
-    box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.30);
-  }
-`;
 
 export const AnimatedElevationBox = styled(Box)<{
   elevation?: keyof typeof elevationLevels;
   hoverElevation?: keyof typeof elevationLevels;
   duration?: keyof typeof motionTokens.duration;
-}>(({ theme, elevation = 1, hoverElevation, duration = 'short2' }) => ({
+}>(({ elevation = 1, hoverElevation, duration = 'short2' }) => ({
   ...elevationLevels[elevation],
   transition: `box-shadow ${motionTokens.duration[duration]} ${motionTokens.easing.standard}`,
   '&:hover': hoverElevation ? {
@@ -103,7 +95,7 @@ export const AnimatedElevationBox = styled(Box)<{
 export const FloatingCard = styled(Card)<{
   floating?: boolean;
   hoverFloat?: boolean;
-}>(({ theme, floating = false, hoverFloat = true }) => ({
+}>(({ floating = false, hoverFloat = true }) => ({
   ...elevationLevels[floating ? 2 : 1],
   transition: `all ${motionTokens.duration.medium1} ${motionTokens.easing.standard}`,
   '&:hover': hoverFloat ? {
@@ -264,7 +256,7 @@ export const GlassmorphismContainer = styled(Box)<{
   backdropFilter: `blur(${blur}px)`,
   WebkitBackdropFilter: `blur(${blur}px)`,
   border: `1px solid ${theme.palette.divider}${Math.round(borderOpacity * 255).toString(16).padStart(2, '0')}`,
-  borderRadius: theme.shape.borderRadius * 2,
+  borderRadius: (typeof theme.shape.borderRadius === 'number' ? theme.shape.borderRadius * 2 : theme.shape.borderRadius),
   boxShadow: elevationLevels[1].boxShadow,
   position: 'relative' as const,
   
@@ -296,7 +288,7 @@ export const NeumorphicContainer = styled(Box)<{
   
   return {
     backgroundColor: baseColor,
-    borderRadius: theme.shape.borderRadius * 2,
+    borderRadius: (typeof theme.shape.borderRadius === 'number' ? theme.shape.borderRadius * 2 : theme.shape.borderRadius),
     boxShadow: inset 
       ? `inset ${shadowDistance}px ${shadowDistance}px ${blurRadius}px ${darkShadow}, 
          inset -${shadowDistance}px -${shadowDistance}px ${blurRadius}px ${lightShadow}`

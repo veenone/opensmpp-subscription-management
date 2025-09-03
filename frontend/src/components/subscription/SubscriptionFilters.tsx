@@ -11,24 +11,17 @@ import {
   IconButton,
   Tooltip,
   Popover,
-  Card,
   CardContent,
   Button,
   Divider,
   FormControlLabel,
   Switch,
   Slider,
-  Typography,
-  useTheme,
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  FilterList as FilterIcon,
   Clear as ClearIcon,
   Tune as TuneIcon,
-  CalendarToday as CalendarIcon,
-  Person as PersonIcon,
-  Phone as PhoneIcon,
 } from '@mui/icons-material';
 
 import { SubscriptionStatus } from '../../types/subscription';
@@ -38,13 +31,12 @@ import {
 } from '../../theme/typography';
 import { 
   AccessibleButton,
-  HighContrastContainer 
+ 
 } from '../../theme/accessibility';
 import { 
   ResponsiveFlex,
   HideOn,
-  ShowOn,
-  useBreakpoint 
+ 
 } from '../../theme/responsive';
 import { FloatingCard } from '../../theme/elevation';
 
@@ -89,12 +81,9 @@ const SubscriptionFilters: React.FC<SubscriptionFiltersProps> = ({
   totalCount = 0,
   filteredCount = 0,
 }) => {
-  const theme = useTheme();
-  const breakpoint = useBreakpoint();
 
   // State management
   const [filters, setFilters] = useState<FilterOptions>(defaultFilters);
-  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [searchDebounceTimer, setSearchDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
@@ -132,7 +121,6 @@ const SubscriptionFilters: React.FC<SubscriptionFiltersProps> = ({
   const handleResetFilters = () => {
     setFilters(defaultFilters);
     onFiltersChange(defaultFilters);
-    setAdvancedOpen(false);
   };
 
   // Get active filter count
@@ -166,9 +154,11 @@ const SubscriptionFilters: React.FC<SubscriptionFiltersProps> = ({
       {/* Main Filter Bar */}
       <ResponsiveFlex 
         gap={2} 
-        sx={{ mb: 2 }}
-        direction={{ xs: 'column', sm: 'row' }}
-        align={{ xs: 'stretch', sm: 'center' }}
+        sx={{ 
+          mb: 2,
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' }
+        }}
       >
         {/* Search Field */}
         <Box sx={{ flex: 1, minWidth: { xs: '100%', sm: '300px' } }}>
@@ -277,7 +267,7 @@ const SubscriptionFilters: React.FC<SubscriptionFiltersProps> = ({
       {/* Active Filters Display */}
       {activeFilterCount > 0 && (
         <Box sx={{ mb: 2 }}>
-          <ResponsiveFlex gap={1} wrap="wrap">
+          <ResponsiveFlex gap={1} sx={{ flexWrap: 'wrap' }}>
             {filters.search && (
               <Chip
                 label={`Search: "${filters.search}"`}
@@ -495,7 +485,7 @@ const SubscriptionFilters: React.FC<SubscriptionFiltersProps> = ({
             </Box>
 
             {/* Action Buttons */}
-            <ResponsiveFlex justify="space-between" gap={1}>
+            <ResponsiveFlex gap={1} sx={{ justifyContent: 'space-between' }}>
               <Button
                 variant="text"
                 onClick={handleResetFilters}

@@ -1,4 +1,5 @@
 import { apiClient } from './apiClient';
+import type { Permission, Role } from '../types';
 
 export interface User {
   id: number;
@@ -7,23 +8,9 @@ export interface User {
   firstName: string;
   lastName: string;
   roles: Role[];
-  permissions: string[];
-  lastLoginAt?: string;
+  lastLogin?: string;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface Role {
-  id: number;
-  name: string;
-  description: string;
-  permissions: Permission[];
-}
-
-export interface Permission {
-  id: number;
-  name: string;
-  description: string;
 }
 
 export interface LoginRequest {
@@ -65,7 +52,19 @@ class AuthService {
   private readonly basePath = '/auth';
 
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    return apiClient.post(`${this.basePath}/login`, credentials);
+    const url = `${this.basePath}/login`;
+    console.log('AuthService login - URL:', url);
+    console.log('AuthService login - Credentials:', credentials);
+    console.log('AuthService login - Base path:', this.basePath);
+    
+    try {
+      const response = await apiClient.post(url, credentials);
+      console.log('Login response:', response);
+      return response;
+    } catch (error) {
+      console.error('Login error in authService:', error);
+      throw error;
+    }
   }
 
   async logout(): Promise<void> {
@@ -110,28 +109,140 @@ class AuthService {
     }
   }
 
+  // Helper method to get all permissions from user roles
+  private getUserPermissions(user: User): string[] {
+    if (!user) {
+      console.warn('AuthService.getUserPermissions: user is null or undefined');
+      return [];
+    }
+    if (!user.roles || !Array.isArray(user.roles)) {
+      console.warn('AuthService.getUserPermissions: user.roles is null, undefined, or not an array', { user });
+      return [];
+    }
+    
+    try {
+      return user.roles.flatMap(role => {
+        if (!role || !role.permissions || !Array.isArray(role.permissions)) {
+          console.warn('AuthService.getUserPermissions: invalid role or permissions structure', { role });
+          return [];
+        }
+        return role.permissions
+          .filter(permission => permission && permission.name)
+          .map(permission => permission.name);
+      });
+    } catch (error) {
+      console.error('AuthService.getUserPermissions: error extracting permissions', error, { user });
+      return [];
+    }
+  }
+
   // Check if user has specific permission
   hasPermission(user: User | null, permission: string): boolean {
-    if (!user) return false;
-    return user.permissions.includes(permission);
+    if (!user) {
+      console.debug('AuthService.hasPermission: user is null');
+      return false;
+    }
+    if (!permission || typeof permission !== 'string') {
+      console.warn('AuthService.hasPermission: invalid permission parameter', { permission });
+      return false;
+    }
+    
+    try {
+      const userPermissions = this.getUserPermissions(user);
+      const hasPermission = userPermissions.includes(permission);
+      console.debug('AuthService.hasPermission:', { permission, hasPermission, userPermissions });
+      return hasPermission;
+    } catch (error) {
+      console.error('AuthService.hasPermission: error checking permission', error, { user, permission });
+      return false;
+    }
   }
 
   // Check if user has any of the specified roles
   hasRole(user: User | null, roles: string[]): boolean {
-    if (!user) return false;
-    return user.roles.some(role => roles.includes(role.name));
+    if (!user) {
+      console.debug('AuthService.hasRole: user is null');
+      return false;
+    }
+    if (!roles || !Array.isArray(roles)) {
+      console.warn('AuthService.hasRole: invalid roles parameter', { roles });
+      return false;
+    }
+    if (!user.roles || !Array.isArray(user.roles)) {
+      console.warn('AuthService.hasRole: user.roles is null, undefined, or not an array', { user });
+      return false;
+    }
+    
+    try {
+      const hasRole = user.roles.some(role => {
+        if (!role || !role.name) {
+          console.warn('AuthService.hasRole: invalid role structure', { role });
+          return false;
+        }
+        return roles.includes(role.name);
+      });
+      console.debug('AuthService.hasRole:', { roles, hasRole, userRoles: user.roles.map(r => r.name) });
+      return hasRole;
+    } catch (error) {
+      console.error('AuthService.hasRole: error checking roles', error, { user, roles });
+      return false;
+    }
   }
 
   // Check if user has all specified permissions
   hasAllPermissions(user: User | null, permissions: string[]): boolean {
-    if (!user) return false;
-    return permissions.every(permission => user.permissions.includes(permission));
+    if (!user) {
+      console.debug('AuthService.hasAllPermissions: user is null');
+      return false;
+    }
+    if (!permissions || !Array.isArray(permissions)) {
+      console.warn('AuthService.hasAllPermissions: invalid permissions parameter', { permissions });
+      return false;
+    }
+    
+    try {
+      const userPermissions = this.getUserPermissions(user);
+      const hasAllPermissions = permissions.every(permission => {
+        if (!permission || typeof permission !== 'string') {
+          console.warn('AuthService.hasAllPermissions: invalid permission in array', { permission });
+          return false;
+        }
+        return userPermissions.includes(permission);
+      });
+      console.debug('AuthService.hasAllPermissions:', { permissions, hasAllPermissions, userPermissions });
+      return hasAllPermissions;
+    } catch (error) {
+      console.error('AuthService.hasAllPermissions: error checking permissions', error, { user, permissions });
+      return false;
+    }
   }
 
   // Check if user has any of the specified permissions
   hasAnyPermission(user: User | null, permissions: string[]): boolean {
-    if (!user) return false;
-    return permissions.some(permission => user.permissions.includes(permission));
+    if (!user) {
+      console.debug('AuthService.hasAnyPermission: user is null');
+      return false;
+    }
+    if (!permissions || !Array.isArray(permissions)) {
+      console.warn('AuthService.hasAnyPermission: invalid permissions parameter', { permissions });
+      return false;
+    }
+    
+    try {
+      const userPermissions = this.getUserPermissions(user);
+      const hasAnyPermission = permissions.some(permission => {
+        if (!permission || typeof permission !== 'string') {
+          console.warn('AuthService.hasAnyPermission: invalid permission in array', { permission });
+          return false;
+        }
+        return userPermissions.includes(permission);
+      });
+      console.debug('AuthService.hasAnyPermission:', { permissions, hasAnyPermission, userPermissions });
+      return hasAnyPermission;
+    } catch (error) {
+      console.error('AuthService.hasAnyPermission: error checking permissions', error, { user, permissions });
+      return false;
+    }
   }
 }
 

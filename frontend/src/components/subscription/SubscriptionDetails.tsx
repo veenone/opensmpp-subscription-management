@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogActions,
   Box,
-  Grid,
+  Grid2 as Grid,
   CardContent,
   Chip,
   List,
@@ -292,7 +292,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             <TabPanel value={tabValue} index={0}>
               <Grid container spacing={3}>
                 {/* Basic Information Card */}
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid xs={12} md={6}>
                   <FloatingCard floating>
                     <CardContent>
                       <HeadlineMedium gutterBottom>
@@ -357,7 +357,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                 </Grid>
 
                 {/* Quick Stats Card */}
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid xs={12} md={6}>
                   <FloatingCard floating>
                     <CardContent>
                       <HeadlineMedium gutterBottom>
@@ -432,7 +432,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
             {/* Technical Tab */}
             <TabPanel value={tabValue} index={1}>
               <Grid container spacing={3}>
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid xs={12} md={6}>
                   <FloatingCard floating>
                     <CardContent>
                       <HeadlineMedium gutterBottom>
@@ -462,7 +462,7 @@ const SubscriptionDetails: React.FC<SubscriptionDetailsProps> = ({
                   </FloatingCard>
                 </Grid>
 
-                <Grid size={{ xs: 12, md: 6 }}>
+                <Grid xs={12} md={6}>
                   <FloatingCard floating>
                     <CardContent>
                       <HeadlineMedium gutterBottom>
