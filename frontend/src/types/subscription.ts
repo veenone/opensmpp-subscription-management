@@ -5,6 +5,20 @@
 
 export type SubscriptionStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'EXPIRED';
 
+// Subscription source enumeration
+export enum SubscriptionSource {
+  FILE = 'FILE',
+  DATABASE = 'DATABASE',
+  BOTH = 'BOTH'
+}
+
+// Sync status enumeration
+export enum SyncStatus {
+  SYNCED = 'SYNCED',
+  PENDING = 'PENDING',
+  CONFLICT = 'CONFLICT'
+}
+
 export interface Subscription {
   id: string;
   msisdn: string;
@@ -35,6 +49,12 @@ export interface Subscription {
   createdBy?: string;
   updatedBy?: string;
   version?: number;
+  
+  // Synchronization fields
+  source?: SubscriptionSource;
+  lastSyncTime?: string;
+  syncStatus?: SyncStatus;
+  fileChecksum?: string;
 }
 
 export interface CreateSubscriptionRequest {
